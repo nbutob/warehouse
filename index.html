@@ -158,7 +158,7 @@ input::placeholder{color:var(--f3)}
 <!-- ════════ APPS SCRIPT URL — QUAN TRỌNG ════════ -->
 <script>
 // ⚠️ Tim thay đường dẫn này sau khi deploy Apps Script
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzWYI9k8tXQUmeGilaUcQ4G7KJIfTiL1WUnKam80wwWlXSPYSrudPOCeN2VsPQb_epaVw/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzcWK_UvG9y6FAvnTGMZaGAw-thwfRTUODGt3I987Pz0hEHYhpP8UiDzqsdA2EGeVWa0Q/exec";
 </script>
 
 <!-- ════════ LOGIN ════════ -->
@@ -213,13 +213,33 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbzWYI9k8tXQUmeGilaUcQ4G
             <label>NGƯỜI NHẬN</label>
             <input id="fNhan" type="text" placeholder="Họ tên người nhận"/>
           </div>
+          <div class="f full">
+            <label>CHỌN MÃ HÀNG / NPL</label>
+            <select id="fNPL" onchange="onNPLChange()"><option value="">— Chọn mã hàng —</option></select>
+          </div>
           <div class="f">
-            <label>NGUYÊN PHỤ LIỆU</label>
-            <select id="fNPL"><option value="">— Chọn NPL —</option></select>
+            <label>MÃ HÀNG</label>
+            <input id="fMaHang" type="text" readonly placeholder="Tự điền khi chọn NPL" style="background:var(--f8);color:var(--f5)"/>
+          </div>
+          <div class="f">
+            <label>TÊN NPL</label>
+            <input id="fTenNPL" type="text" readonly placeholder="Tự điền khi chọn NPL" style="background:var(--f8);color:var(--f5)"/>
+          </div>
+          <div class="f">
+            <label>MÀU SẮC</label>
+            <input id="fMau" type="text" readonly placeholder="Tự điền khi chọn NPL" style="background:var(--f8);color:var(--f5)"/>
+          </div>
+          <div class="f">
+            <label>PO</label>
+            <input id="fPO" type="text" readonly placeholder="Tự điền khi chọn NPL" style="background:var(--f8);color:var(--f5)"/>
           </div>
           <div class="f">
             <label>SỐ LƯỢNG</label>
-            <input id="fSL" type="text" placeholder="VD: 50m, 100 cuộn"/>
+            <input id="fSL" type="text" placeholder="Nhập số lượng"/>
+          </div>
+          <div class="f">
+            <label>ĐƠN VỊ TÍNH</label>
+            <input id="fDonVi" type="text" readonly placeholder="Tự điền khi chọn NPL" style="background:var(--f8);color:var(--f5)"/>
           </div>
           <div class="f full">
             <label>GHI CHÚ (tuỳ chọn)</label>
@@ -458,13 +478,36 @@ const getSig = id => SIGS[id]?.canvas.toDataURL("image/png");
 // ══════════════════════════════════════════
 //  NPL DROPDOWN
 // ══════════════════════════════════════════
+let NPL_DATA = [];
+
 async function loadNPL() {
   try {
     const r   = await api("getNPL");
+    NPL_DATA  = r.data;
     const sel = document.getElementById("fNPL");
-    sel.innerHTML = '<option value="">— Chọn NPL —</option>';
-    r.data.forEach(n => { const o=document.createElement("option"); o.value=o.textContent=n; sel.appendChild(o); });
+    sel.innerHTML = '<option value="">— Chọn mã hàng —</option>';
+    r.data.forEach((n, i) => {
+      const o = document.createElement("option");
+      o.value = i;
+      // Hiển thị: Mã hàng — Tên NPL — Màu — PO
+      o.textContent = [n.ma_hang, n.ten_npl, n.mau_sac, n.po].filter(Boolean).join("  |  ");
+      sel.appendChild(o);
+    });
   } catch {}
+}
+
+function onNPLChange() {
+  const idx = document.getElementById("fNPL").value;
+  if (idx === "" || !NPL_DATA[idx]) {
+    ["fMaHang","fTenNPL","fMau","fPO","fDonVi"].forEach(id => document.getElementById(id).value = "");
+    return;
+  }
+  const n = NPL_DATA[idx];
+  document.getElementById("fMaHang").value = n.ma_hang;
+  document.getElementById("fTenNPL").value = n.ten_npl;
+  document.getElementById("fMau").value    = n.mau_sac;
+  document.getElementById("fPO").value     = n.po;
+  document.getElementById("fDonVi").value  = n.don_vi;
 }
 
 // ══════════════════════════════════════════
@@ -473,24 +516,31 @@ async function loadNPL() {
 async function submitPhieu() {
   const nguoi_cap = document.getElementById("fCap").value.trim();
   const nguoi_nhan= document.getElementById("fNhan").value.trim();
-  const ten_npl   = document.getElementById("fNPL").value;
+  const ma_hang   = document.getElementById("fMaHang").value.trim();
+  const ten_npl   = document.getElementById("fTenNPL").value.trim();
+  const mau_sac   = document.getElementById("fMau").value.trim();
+  const po        = document.getElementById("fPO").value.trim();
+  const don_vi    = document.getElementById("fDonVi").value.trim();
   const so_luong  = document.getElementById("fSL").value.trim();
   const ghi_chu   = document.getElementById("fGC").value.trim();
 
-  if (!nguoi_cap||!nguoi_nhan||!ten_npl||!so_luong)
-    return showAl("newAl","er","Vui lòng điền đầy đủ thông tin");
+  if (!nguoi_cap||!nguoi_nhan||!ma_hang||!so_luong)
+    return showAl("newAl","er","Vui lòng điền đầy đủ thông tin và chọn mã hàng");
   if (!SIGS["Cap"]?.ok)
     return showAl("newAl","er","Người cấp phát chưa ký tên");
 
   setBusy("btnNew", true, "Đang lưu...");
   try {
-    const r = await api("taoPhieu", {nguoi_cap, nguoi_nhan, ten_npl, so_luong, ghi_chu,
-                                      chu_ky_cap_b64: getSig("Cap")});
+    const r = await api("taoPhieu", {
+      nguoi_cap, nguoi_nhan, ma_hang, ten_npl, mau_sac, po, don_vi, so_luong, ghi_chu,
+      chu_ky_cap_b64: getSig("Cap")
+    });
     showAl("newAl","ok",
       `✓ Tạo phiếu thành công! &nbsp;Mã phiếu: <b>${r.phieu_id}</b><br>
        Gửi mã này cho người nhận để họ vào web ký xác nhận.`);
     // Reset
-    ["fNhan","fSL","fGC"].forEach(i => document.getElementById(i).value="");
+    ["fNhan","fSL","fGC","fMaHang","fTenNPL","fMau","fPO","fDonVi"]
+      .forEach(i => document.getElementById(i).value="");
     document.getElementById("fNPL").selectedIndex=0;
     clrSig("Cap");
   } catch(e) { showAl("newAl","er", e.message); }
@@ -516,8 +566,11 @@ async function loadForSign() {
       <div class="dr"><span class="dl">Mã phiếu</span><span class="dv" style="font-family:monospace">${p.phieu_id}</span></div>
       <div class="dr"><span class="dl">Ngày giờ</span><span class="dv">${p.timestamp}</span></div>
       <div class="dr"><span class="dl">Người cấp phát</span><span class="dv">${p.nguoi_cap}</span></div>
-      <div class="dr"><span class="dl">Nguyên phụ liệu</span><span class="dv">${p.ten_npl}</span></div>
-      <div class="dr" style="border:none"><span class="dl">Số lượng</span><span class="dv">${p.so_luong}</span></div>
+      <div class="dr"><span class="dl">Mã hàng</span><span class="dv">${p.ma_hang}</span></div>
+      <div class="dr"><span class="dl">Tên NPL</span><span class="dv">${p.ten_npl}</span></div>
+      <div class="dr"><span class="dl">Màu sắc</span><span class="dv">${p.mau_sac}</span></div>
+      <div class="dr"><span class="dl">PO</span><span class="dv">${p.po}</span></div>
+      <div class="dr" style="border:none"><span class="dl">Số lượng</span><span class="dv">${p.so_luong} ${p.don_vi}</span></div>
     `;
     clrSig("Nhan");
     document.getElementById("signDetail").scrollIntoView({behavior:"smooth",block:"start"});
@@ -581,7 +634,7 @@ function renderList(data, container) {
         <span class="pi-id">${p.phieu_id}</span>
         <span class="st ${p.trang_thai==="Hoàn tất"?"st-done":"st-wait"}">${p.trang_thai}</span>
       </div>
-      <div class="pi-npl">${p.ten_npl} &nbsp;·&nbsp; ${p.so_luong}</div>
+      <div class="pi-npl">${p.ma_hang} · ${p.ten_npl} · ${p.mau_sac} &nbsp;|&nbsp; ${p.so_luong} ${p.don_vi}</div>
       <div class="pi-meta">${p.nguoi_cap} → ${p.nguoi_nhan} &nbsp;·&nbsp; ${p.timestamp}</div>
     </div>`).join("");
 }
@@ -601,8 +654,11 @@ async function showDetail(pid) {
       <div class="dr"><span class="dl">Ngày giờ</span><span class="dv">${p.timestamp}</span></div>
       <div class="dr"><span class="dl">Người cấp phát</span><span class="dv">${p.nguoi_cap}</span></div>
       <div class="dr"><span class="dl">Người nhận</span><span class="dv">${p.nguoi_nhan}</span></div>
-      <div class="dr"><span class="dl">Nguyên phụ liệu</span><span class="dv">${p.ten_npl}</span></div>
-      <div class="dr"><span class="dl">Số lượng</span><span class="dv">${p.so_luong}</span></div>
+      <div class="dr"><span class="dl">Mã hàng</span><span class="dv">${p.ma_hang}</span></div>
+      <div class="dr"><span class="dl">Tên NPL</span><span class="dv">${p.ten_npl}</span></div>
+      <div class="dr"><span class="dl">Màu sắc</span><span class="dv">${p.mau_sac}</span></div>
+      <div class="dr"><span class="dl">PO</span><span class="dv">${p.po}</span></div>
+      <div class="dr"><span class="dl">Số lượng</span><span class="dv">${p.so_luong} ${p.don_vi}</span></div>
       <div class="dr"><span class="dl">Trạng thái</span><span class="dv"><span class="st ${cls}">${p.trang_thai}</span></span></div>
       ${p.ghi_chu?`<div class="dr"><span class="dl">Ghi chú</span><span class="dv">${p.ghi_chu}</span></div>`:""}
       <div class="links">
