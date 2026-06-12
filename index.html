@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1C2B1E">
+<title>NPL Manager</title>
+<style>
+/* ══ TOKENS ══════════════════════════════════════════ */
+:root {
+  --g9:#1C2B1E; --g7:#2D4A31; --g5:#3D6B42; --g3:#6A9E6F;
+  --g1:#C8E6CA; --g0:#EEF6EF;
+  --am:#D4860A; --am0:#FEF3DC;
+  --rd:#C0392B; --rd0:#FDECEA;
+  --w:#fff; --f8:#F8F9F8; --f1:#EFF0EF;
+  --f3:#C8CAC8; --f5:#6B6F6B; --f7:#3A3D3A; --f9:#1A1C1A;
+  --r:10px; --sh:0 2px 12px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+     background:var(--f8);color:var(--f9);min-height:100vh}
+
+/* ══ TOPBAR ══ */
+.topbar{background:var(--g9);color:var(--w);padding:0 16px;height:52px;
+        display:flex;align-items:center;justify-content:space-between;
+        position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.3)}
+.brand{font-size:15px;font-weight:600;letter-spacing:.01em;display:flex;align-items:center;gap:8px}
+.brand-dot{width:8px;height:8px;background:var(--g3);border-radius:50%}
+.user-info{font-size:12px;color:var(--g3);display:flex;align-items:center;gap:10px}
+.btn-out{background:none;border:1px solid var(--g7);color:var(--g3);
+         font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer}
+.btn-out:hover{background:var(--g7);color:var(--w)}
+
+/* ══ NAV ══ */
+.nav{background:var(--w);border-bottom:1px solid var(--f1);
+     display:flex;padding:0 16px;overflow-x:auto;gap:0}
+.nav-tab{font-size:13px;padding:13px 15px;border-bottom:2px solid transparent;
+         color:var(--f5);cursor:pointer;white-space:nowrap;transition:all .15s;user-select:none}
+.nav-tab.active{color:var(--g7);border-bottom-color:var(--g5);font-weight:500}
+.nav-tab:hover:not(.active){color:var(--f7)}
+.badge{background:var(--am);color:var(--w);font-size:10px;
+       padding:1px 5px;border-radius:8px;margin-left:4px;display:none}
+
+/* ══ MAIN ══ */
+main{max-width:640px;margin:0 auto;padding:20px 14px}
+.page{display:none}.page.active{display:block}
+
+/* ══ CARDS ══ */
+.card{background:var(--w);border-radius:var(--r);border:1px solid var(--f1);
+      padding:18px;margin-bottom:14px;box-shadow:var(--sh)}
+.card-title{font-size:13px;font-weight:600;color:var(--f9);margin-bottom:14px;
+            display:flex;align-items:center;gap:7px}
+.card-title::before{content:'';width:3px;height:15px;background:var(--g5);
+                    border-radius:2px;display:block;flex-shrink:0}
+
+/* ══ FORM ══ */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.f{display:flex;flex-direction:column;gap:4px}
+.f.full{grid-column:1/-1}
+label{font-size:11px;color:var(--f5);font-weight:500;letter-spacing:.02em}
+input,select{border:1px solid var(--f3);border-radius:8px;padding:9px 11px;
+             font-size:13px;color:var(--f9);background:var(--w);
+             transition:border .15s;width:100%}
+input:focus,select:focus{outline:none;border-color:var(--g5);
+                          box-shadow:0 0 0 3px rgba(61,107,66,.12)}
+input::placeholder{color:var(--f3)}
+
+/* ══ SIG PAD ══ */
+.sig-wrap{border:1.5px dashed var(--f3);border-radius:8px;background:var(--f8);
+          position:relative;overflow:hidden}
+.sig-wrap canvas{display:block;touch-action:none;cursor:crosshair;width:100%}
+.sig-hint{position:absolute;bottom:8px;right:10px;font-size:11px;
+          color:var(--f3);pointer-events:none;transition:opacity .2s}
+.sig-signed .sig-hint{opacity:0}
+.sig-row{display:flex;justify-content:flex-end;margin-top:5px}
+.btn-clr{background:none;border:1px solid var(--f3);color:var(--f5);
+         font-size:11px;padding:3px 10px;border-radius:5px;cursor:pointer}
+.btn-clr:hover{border-color:var(--rd);color:var(--rd)}
+
+/* ══ BUTTONS ══ */
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;
+     font-size:14px;font-weight:500;padding:11px 20px;border-radius:8px;
+     border:none;cursor:pointer;transition:all .15s;width:100%;margin-top:14px}
+.btn-p{background:var(--g7);color:var(--w)}
+.btn-p:hover{background:var(--g9)}
+.btn-p:disabled{background:var(--f3);cursor:not-allowed}
+.btn-s{background:var(--f1);color:var(--f7);width:auto;margin:0;padding:9px 16px}
+.btn-s:hover{background:var(--f3)}
+
+/* ══ STATUS ══ */
+.st{display:inline-block;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px}
+.st-done{background:var(--g0);color:var(--g7)}
+.st-wait{background:var(--am0);color:var(--am)}
+
+/* ══ ALERTS ══ */
+.al{padding:11px 13px;border-radius:8px;font-size:13px;margin-bottom:12px;
+    display:flex;align-items:flex-start;gap:7px;line-height:1.5}
+.al-ok{background:var(--g0);color:var(--g7);border:1px solid var(--g1)}
+.al-er{background:var(--rd0);color:var(--rd);border:1px solid #F5C6C2}
+.al-in{background:var(--am0);color:var(--am);border:1px solid #F5DFA0}
+
+/* ══ PHIẾU LIST ══ */
+.pi{background:var(--w);border:1px solid var(--f1);border-radius:var(--r);
+    padding:13px 15px;margin-bottom:9px;cursor:pointer;transition:border-color .15s;
+    box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.pi:hover{border-color:var(--g3)}
+.pi-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.pi-id{font-size:12px;font-weight:600;color:var(--g7);font-family:monospace}
+.pi-npl{font-size:14px;font-weight:500;margin:3px 0;color:var(--f9)}
+.pi-meta{font-size:11px;color:var(--f5)}
+
+/* ══ LOGIN ══ */
+.lw{max-width:340px;margin:56px auto;padding:0 14px}
+.lo{text-align:center;margin-bottom:24px}
+.lo h1{font-size:22px;color:var(--g9);font-weight:700}
+.lo p{font-size:13px;color:var(--f5);margin-top:4px}
+
+/* ══ MODAL ══ */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
+    z-index:200;align-items:center;justify-content:center;padding:14px}
+.ov.open{display:flex}
+.modal{background:var(--w);border-radius:var(--r);width:100%;max-width:480px;
+       max-height:88vh;overflow-y:auto;padding:22px;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.mt{font-size:16px;font-weight:600;font-family:monospace}
+.mc{background:none;border:none;font-size:22px;cursor:pointer;color:var(--f5);
+    line-height:1;padding:0 2px}
+.dr{display:flex;justify-content:space-between;padding:8px 0;
+    border-bottom:1px solid var(--f1);font-size:13px}
+.dl{color:var(--f5)}.dv{font-weight:500;max-width:58%;text-align:right}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.lnk{font-size:12px;color:var(--g7);text-decoration:none;font-weight:500}
+.lnk:hover{text-decoration:underline}
+
+/* ══ MISC ══ */
+.ld{text-align:center;padding:40px 20px;color:var(--f5)}
+.sp{width:26px;height:26px;border:3px solid var(--f1);border-top-color:var(--g5);
+    border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:44px 20px;color:var(--f5)}
+.empty-ic{font-size:36px;margin-bottom:10px}
+.role-tag{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;margin-left:6px}
+.rt-admin{background:#EDE7F6;color:#5E35B1}
+.rt-issuer{background:var(--g0);color:var(--g7)}
+.rt-receiver{background:var(--am0);color:var(--am)}
+.divider{border:none;border-top:1px solid var(--f1);margin:14px 0}
+.search-row{display:flex;gap:8px}
+.search-row input{flex:1}
+
+@media(max-width:480px){
+  .fg{grid-template-columns:1fr}
+  .f.full{grid-column:1}
+}
+</style>
+</head>
+<body>
+
+<!-- ════════ APPS SCRIPT URL — QUAN TRỌNG ════════ -->
+<script>
+// ⚠️ Tim thay đường dẫn này sau khi deploy Apps Script
+const GAS_URL = "https://script.google.com/macros/s/PASTE_YOUR_DEPLOYMENT_ID_HERE/exec";
+</script>
+
+<!-- ════════ LOGIN ════════ -->
+<div id="loginPage">
+  <div class="lw">
+    <div class="lo">
+      <h1>📦 NPL Manager</h1>
+      <p>Hệ thống cấp phát nguyên phụ liệu</p>
+    </div>
+    <div class="card">
+      <div id="lgAl"></div>
+      <div class="f" style="margin-bottom:11px">
+        <label>TÊN ĐĂNG NHẬP</label>
+        <input id="lgU" type="text" placeholder="username" autocomplete="username"/>
+      </div>
+      <div class="f">
+        <label>MẬT KHẨU</label>
+        <input id="lgP" type="password" placeholder="••••••" autocomplete="current-password"/>
+      </div>
+      <button class="btn btn-p" onclick="doLogin()" id="lgBtn">Đăng nhập</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ APP ════════ -->
+<div id="appShell" style="display:none">
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-dot"></div>
+      NPL Manager
+    </div>
+    <div class="user-info">
+      <span id="uLabel"></span>
+      <button class="btn-out" onclick="doLogout()">Đăng xuất</button>
+    </div>
+  </header>
+
+  <nav class="nav" id="mainNav"></nav>
+
+  <main>
+    <!-- TẠO PHIẾU (issuer) -->
+    <div id="pgNew" class="page">
+      <div class="card">
+        <div class="card-title">Thông tin cấp phát</div>
+        <div id="newAl"></div>
+        <div class="fg">
+          <div class="f">
+            <label>NGƯỜI CẤP PHÁT</label>
+            <input id="fCap" type="text" placeholder="Họ tên người cấp"/>
+          </div>
+          <div class="f">
+            <label>NGƯỜI NHẬN</label>
+            <input id="fNhan" type="text" placeholder="Họ tên người nhận"/>
+          </div>
+          <div class="f">
+            <label>NGUYÊN PHỤ LIỆU</label>
+            <select id="fNPL"><option value="">— Chọn NPL —</option></select>
+          </div>
+          <div class="f">
+            <label>SỐ LƯỢNG</label>
+            <input id="fSL" type="text" placeholder="VD: 50m, 100 cuộn"/>
+          </div>
+          <div class="f full">
+            <label>GHI CHÚ (tuỳ chọn)</label>
+            <input id="fGC" type="text" placeholder=""/>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Chữ ký người cấp phát</div>
+        <div class="sig-wrap" id="swCap">
+          <canvas id="scCap" height="120"></canvas>
+          <span class="sig-hint">Ký tên tại đây bằng chuột hoặc ngón tay</span>
+        </div>
+        <div class="sig-row"><button class="btn-clr" onclick="clrSig('Cap')">Ký lại</button></div>
+      </div>
+
+      <button class="btn btn-p" id="btnNew" onclick="submitPhieu()">Tạo phiếu & lưu chữ ký</button>
+    </div>
+
+    <!-- KÝ NHẬN (receiver) -->
+    <div id="pgSign" class="page">
+      <div class="card">
+        <div class="card-title">Tìm phiếu cần ký</div>
+        <div class="search-row">
+          <input id="sPhieuId" type="text" placeholder="Nhập mã phiếu  VD: PHI-20250611-001"
+                 onkeydown="if(event.key==='Enter') loadForSign()"/>
+          <button class="btn btn-s" onclick="loadForSign()">Tìm</button>
+        </div>
+      </div>
+
+      <div id="signDetail" style="display:none">
+        <div class="card">
+          <div class="card-title">Thông tin phiếu</div>
+          <div id="signInfo"></div>
+        </div>
+        <div class="card">
+          <div class="card-title">Chữ ký xác nhận</div>
+          <div class="sig-wrap" id="swNhan">
+            <canvas id="scNhan" height="120"></canvas>
+            <span class="sig-hint">Ký tên tại đây bằng chuột hoặc ngón tay</span>
+          </div>
+          <div class="sig-row"><button class="btn-clr" onclick="clrSig('Nhan')">Ký lại</button></div>
+        </div>
+        <div id="signAl"></div>
+        <button class="btn btn-p" id="btnSign" onclick="submitSign()">Xác nhận nhận hàng</button>
+      </div>
+    </div>
+
+    <!-- LỊCH SỬ (tất cả) -->
+    <div id="pgList" class="page">
+      <div id="listBox"><div class="ld"><div class="sp"></div>Đang tải...</div></div>
+    </div>
+
+    <!-- DASHBOARD ADMIN -->
+    <div id="pgAdmin" class="page">
+      <div class="card">
+        <div class="card-title">Tổng quan</div>
+        <div id="statsBox" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px">
+          <div style="text-align:center;padding:12px;background:var(--f8);border-radius:8px">
+            <div style="font-size:24px;font-weight:700;color:var(--g7)" id="statTotal">—</div>
+            <div style="font-size:11px;color:var(--f5)">Tổng phiếu</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:var(--am0);border-radius:8px">
+            <div style="font-size:24px;font-weight:700;color:var(--am)" id="statWait">—</div>
+            <div style="font-size:11px;color:var(--am)">Chờ ký nhận</div>
+          </div>
+          <div style="text-align:center;padding:12px;background:var(--g0);border-radius:8px">
+            <div style="font-size:24px;font-weight:700;color:var(--g7)" id="statDone">—</div>
+            <div style="font-size:11px;color:var(--g5)">Hoàn tất</div>
+          </div>
+        </div>
+      </div>
+      <div id="adminBox"><div class="ld"><div class="sp"></div>Đang tải...</div></div>
+    </div>
+  </main>
+</div>
+
+<!-- ════════ MODAL CHI TIẾT ════════ -->
+<div class="ov" id="ov" onclick="closeModal(event)">
+  <div class="modal">
+    <div class="mh">
+      <span class="mt" id="mTitle">Chi tiết</span>
+      <button class="mc" onclick="closeModal()">×</button>
+    </div>
+    <div id="mBody"><div class="ld"><div class="sp"></div></div></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let TOKEN    = localStorage.getItem("npl_tk")   || "";
+let USERINFO = JSON.parse(localStorage.getItem("npl_ui") || "null");
+let SIGN_ID  = "";
+
+const TABS = {
+  issuer  : [{id:"pgNew",  label:"Tạo phiếu"},    {id:"pgList",  label:"Lịch sử"}],
+  receiver: [{id:"pgSign", label:"Ký nhận"},       {id:"pgList",  label:"Lịch sử"}],
+  admin   : [{id:"pgAdmin",label:"Dashboard"},     {id:"pgList",  label:"Tất cả phiếu"}],
+};
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+window.addEventListener("DOMContentLoaded", () => {
+  setupSig("Cap"); setupSig("Nhan");
+  if (TOKEN && USERINFO) showApp();
+});
+
+// ══════════════════════════════════════════
+//  API CALL
+// ══════════════════════════════════════════
+async function api(action, body={}) {
+  const res  = await fetch(GAS_URL, {
+    method:"POST", redirect:"follow",
+    headers:{"Content-Type":"text/plain"},
+    body: JSON.stringify({action, token:TOKEN, ...body}),
+  });
+  const data = await res.json();
+  if (!data.ok) throw new Error(data.error || "Lỗi không xác định");
+  return data;
+}
+
+// ══════════════════════════════════════════
+//  AUTH
+// ══════════════════════════════════════════
+async function doLogin() {
+  const u = document.getElementById("lgU").value.trim();
+  const p = document.getElementById("lgP").value;
+  if (!u || !p) return showAl("lgAl","er","Vui lòng nhập đầy đủ thông tin");
+  setBusy("lgBtn", true, "Đang đăng nhập...");
+  try {
+    const r = await api("login", {username:u, password:p});
+    TOKEN    = r.token;
+    USERINFO = {role:r.role, ho_ten:r.ho_ten};
+    localStorage.setItem("npl_tk", TOKEN);
+    localStorage.setItem("npl_ui", JSON.stringify(USERINFO));
+    showApp();
+  } catch(e) {
+    showAl("lgAl","er", e.message);
+  } finally { setBusy("lgBtn", false, "Đăng nhập"); }
+}
+
+function doLogout() {
+  TOKEN=""; USERINFO=null;
+  localStorage.removeItem("npl_tk"); localStorage.removeItem("npl_ui");
+  location.reload();
+}
+
+// ══════════════════════════════════════════
+//  SHOW APP
+// ══════════════════════════════════════════
+function showApp() {
+  document.getElementById("loginPage").style.display = "none";
+  document.getElementById("appShell").style.display  = "block";
+
+  const roleLabel = {admin:"Admin",issuer:"Người cấp phát",receiver:"Người nhận"}[USERINFO.role] || USERINFO.role;
+  document.getElementById("uLabel").innerHTML =
+    `${USERINFO.ho_ten} <span class="role-tag rt-${USERINFO.role}">${roleLabel}</span>`;
+
+  // Build nav tabs
+  const nav  = document.getElementById("mainNav");
+  const tabs = TABS[USERINFO.role] || TABS.receiver;
+  nav.innerHTML = tabs.map((t,i) =>
+    `<div class="nav-tab${i===0?" active":""}" data-page="${t.id}" onclick="switchTab(this)">${t.label}</div>`
+  ).join("");
+
+  // Auto-fill tên người cấp nếu là issuer
+  if (USERINFO.role === "issuer") {
+    document.getElementById("fCap").value = USERINFO.ho_ten;
+  }
+
+  // Show first page
+  document.getElementById(tabs[0].id).classList.add("active");
+  loadNPL();
+
+  // Load data cho tab đầu
+  if (USERINFO.role === "admin")    loadAdmin();
+  if (USERINFO.role === "receiver") { /* chờ user nhập mã */ }
+  if (USERINFO.role === "issuer")   { /* trang tạo phiếu trống */ }
+}
+
+// ══════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════
+function switchTab(el) {
+  document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  el.classList.add("active");
+  const pid = el.dataset.page;
+  document.getElementById(pid)?.classList.add("active");
+  if (pid === "pgList")  loadList();
+  if (pid === "pgAdmin") loadAdmin();
+}
+
+// ══════════════════════════════════════════
+//  SIGNATURE PAD
+// ══════════════════════════════════════════
+const SIGS = {};
+function setupSig(id) {
+  const canvas = document.getElementById("sc" + id);
+  if (!canvas) return;
+  canvas.width = canvas.parentElement.offsetWidth || 560;
+  const ctx = canvas.getContext("2d");
+  ctx.strokeStyle = "#1A1C1A"; ctx.lineWidth = 2;
+  ctx.lineCap = "round"; ctx.lineJoin = "round";
+  let drawing = false;
+  SIGS[id] = {ctx, canvas, ok:false};
+
+  const pos = e => {
+    const r   = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return {x:(src.clientX-r.left)*canvas.width/r.width,
+            y:(src.clientY-r.top)*canvas.height/r.height};
+  };
+  const start = e => { e.preventDefault(); drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); };
+  const move  = e => { e.preventDefault(); if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); SIGS[id].ok=true; document.getElementById("sw"+id)?.classList.add("sig-signed"); };
+  const stop  = ()  => drawing=false;
+  canvas.addEventListener("mousedown", start);
+  canvas.addEventListener("mousemove", move);
+  canvas.addEventListener("mouseup",   stop);
+  canvas.addEventListener("mouseleave",stop);
+  canvas.addEventListener("touchstart",start,{passive:false});
+  canvas.addEventListener("touchmove", move, {passive:false});
+  canvas.addEventListener("touchend",  stop);
+}
+function clrSig(id) {
+  const s = SIGS[id]; if(!s) return;
+  s.ctx.clearRect(0,0,s.canvas.width,s.canvas.height);
+  s.ok=false; document.getElementById("sw"+id)?.classList.remove("sig-signed");
+}
+const getSig = id => SIGS[id]?.canvas.toDataURL("image/png");
+
+// ══════════════════════════════════════════
+//  NPL DROPDOWN
+// ══════════════════════════════════════════
+async function loadNPL() {
+  try {
+    const r   = await api("getNPL");
+    const sel = document.getElementById("fNPL");
+    sel.innerHTML = '<option value="">— Chọn NPL —</option>';
+    r.data.forEach(n => { const o=document.createElement("option"); o.value=o.textContent=n; sel.appendChild(o); });
+  } catch {}
+}
+
+// ══════════════════════════════════════════
+//  TẠO PHIẾU
+// ══════════════════════════════════════════
+async function submitPhieu() {
+  const nguoi_cap = document.getElementById("fCap").value.trim();
+  const nguoi_nhan= document.getElementById("fNhan").value.trim();
+  const ten_npl   = document.getElementById("fNPL").value;
+  const so_luong  = document.getElementById("fSL").value.trim();
+  const ghi_chu   = document.getElementById("fGC").value.trim();
+
+  if (!nguoi_cap||!nguoi_nhan||!ten_npl||!so_luong)
+    return showAl("newAl","er","Vui lòng điền đầy đủ thông tin");
+  if (!SIGS["Cap"]?.ok)
+    return showAl("newAl","er","Người cấp phát chưa ký tên");
+
+  setBusy("btnNew", true, "Đang lưu...");
+  try {
+    const r = await api("taoPhieu", {nguoi_cap, nguoi_nhan, ten_npl, so_luong, ghi_chu,
+                                      chu_ky_cap_b64: getSig("Cap")});
+    showAl("newAl","ok",
+      `✓ Tạo phiếu thành công! &nbsp;Mã phiếu: <b>${r.phieu_id}</b><br>
+       Gửi mã này cho người nhận để họ vào web ký xác nhận.`);
+    // Reset
+    ["fNhan","fSL","fGC"].forEach(i => document.getElementById(i).value="");
+    document.getElementById("fNPL").selectedIndex=0;
+    clrSig("Cap");
+  } catch(e) { showAl("newAl","er", e.message); }
+  finally    { setBusy("btnNew", false, "Tạo phiếu & lưu chữ ký"); }
+}
+
+// ══════════════════════════════════════════
+//  KÝ NHẬN
+// ══════════════════════════════════════════
+async function loadForSign() {
+  const pid = document.getElementById("sPhieuId").value.trim().toUpperCase();
+  if (!pid) return;
+  document.getElementById("signAl").innerHTML = "";
+  try {
+    const r = await api("getPhieu", {phieu_id: pid});
+    const p = r.data;
+    if (p.trang_thai === "Hoàn tất")
+      return showAl("signAl","in","Phiếu <b>"+pid+"</b> đã được ký nhận rồi.");
+
+    SIGN_ID = pid;
+    document.getElementById("signDetail").style.display = "block";
+    document.getElementById("signInfo").innerHTML = `
+      <div class="dr"><span class="dl">Mã phiếu</span><span class="dv" style="font-family:monospace">${p.phieu_id}</span></div>
+      <div class="dr"><span class="dl">Ngày giờ</span><span class="dv">${p.timestamp}</span></div>
+      <div class="dr"><span class="dl">Người cấp phát</span><span class="dv">${p.nguoi_cap}</span></div>
+      <div class="dr"><span class="dl">Nguyên phụ liệu</span><span class="dv">${p.ten_npl}</span></div>
+      <div class="dr" style="border:none"><span class="dl">Số lượng</span><span class="dv">${p.so_luong}</span></div>
+    `;
+    clrSig("Nhan");
+    document.getElementById("signDetail").scrollIntoView({behavior:"smooth",block:"start"});
+  } catch(e) {
+    showAl("signAl","er", e.message);
+    document.getElementById("signDetail").style.display="none";
+  }
+}
+
+async function submitSign() {
+  if (!SIGS["Nhan"]?.ok) return showAl("signAl","er","Vui lòng ký tên trước");
+  setBusy("btnSign", true, "Đang xử lý...");
+  try {
+    const r = await api("kyNhan", {phieu_id:SIGN_ID, chu_ky_nhan_b64:getSig("Nhan")});
+    showAl("signAl","ok",
+      `✓ Xác nhận thành công! &nbsp;
+       <a href="${r.link_pdf}" target="_blank" style="color:var(--g7);font-weight:600">📄 Xem PDF chứng từ</a>`);
+    document.getElementById("signDetail").style.display="none";
+    document.getElementById("sPhieuId").value="";
+  } catch(e) { showAl("signAl","er", e.message); }
+  finally    { setBusy("btnSign", false, "Xác nhận nhận hàng"); }
+}
+
+// ══════════════════════════════════════════
+//  DANH SÁCH
+// ══════════════════════════════════════════
+async function loadList() {
+  const box = document.getElementById("listBox");
+  box.innerHTML = '<div class="ld"><div class="sp"></div>Đang tải...</div>';
+  try {
+    const r = await api("getAllPhieu");
+    renderList(r.data, box);
+  } catch(e) { box.innerHTML = `<div class="al al-er">${e.message}</div>`; }
+}
+
+async function loadAdmin() {
+  const box = document.getElementById("adminBox");
+  box.innerHTML = '<div class="ld"><div class="sp"></div>Đang tải...</div>';
+  try {
+    const r = await api("getAllPhieu");
+    // Stats
+    const total = r.data.length;
+    const wait  = r.data.filter(p=>p.trang_thai==="Chờ ký nhận").length;
+    document.getElementById("statTotal").textContent = total;
+    document.getElementById("statWait").textContent  = wait;
+    document.getElementById("statDone").textContent  = total - wait;
+    // Update badge
+    if (wait>0) { const b=document.querySelector(".badge"); if(b){b.style.display="inline";b.textContent=wait;} }
+    renderList(r.data, box);
+  } catch(e) { box.innerHTML = `<div class="al al-er">${e.message}</div>`; }
+}
+
+function renderList(data, container) {
+  if (!data.length) {
+    container.innerHTML='<div class="empty"><div class="empty-ic">📋</div><p>Chưa có phiếu nào</p></div>';
+    return;
+  }
+  container.innerHTML = data.map(p => `
+    <div class="pi" onclick="showDetail('${p.phieu_id}')">
+      <div class="pi-row">
+        <span class="pi-id">${p.phieu_id}</span>
+        <span class="st ${p.trang_thai==="Hoàn tất"?"st-done":"st-wait"}">${p.trang_thai}</span>
+      </div>
+      <div class="pi-npl">${p.ten_npl} &nbsp;·&nbsp; ${p.so_luong}</div>
+      <div class="pi-meta">${p.nguoi_cap} → ${p.nguoi_nhan} &nbsp;·&nbsp; ${p.timestamp}</div>
+    </div>`).join("");
+}
+
+// ══════════════════════════════════════════
+//  MODAL
+// ══════════════════════════════════════════
+async function showDetail(pid) {
+  document.getElementById("mTitle").textContent = pid;
+  document.getElementById("mBody").innerHTML = '<div class="ld"><div class="sp"></div></div>';
+  document.getElementById("ov").classList.add("open");
+  try {
+    const r = await api("getPhieu",{phieu_id:pid});
+    const p = r.data;
+    const cls = p.trang_thai==="Hoàn tất"?"st-done":"st-wait";
+    document.getElementById("mBody").innerHTML = `
+      <div class="dr"><span class="dl">Ngày giờ</span><span class="dv">${p.timestamp}</span></div>
+      <div class="dr"><span class="dl">Người cấp phát</span><span class="dv">${p.nguoi_cap}</span></div>
+      <div class="dr"><span class="dl">Người nhận</span><span class="dv">${p.nguoi_nhan}</span></div>
+      <div class="dr"><span class="dl">Nguyên phụ liệu</span><span class="dv">${p.ten_npl}</span></div>
+      <div class="dr"><span class="dl">Số lượng</span><span class="dv">${p.so_luong}</span></div>
+      <div class="dr"><span class="dl">Trạng thái</span><span class="dv"><span class="st ${cls}">${p.trang_thai}</span></span></div>
+      ${p.ghi_chu?`<div class="dr"><span class="dl">Ghi chú</span><span class="dv">${p.ghi_chu}</span></div>`:""}
+      <div class="links">
+        ${p.link_chu_ky_cap  ?`<a class="lnk" href="${p.link_chu_ky_cap}"  target="_blank">🖊 Chữ ký cấp phát</a>`:""}
+        ${p.link_chu_ky_nhan ?`<a class="lnk" href="${p.link_chu_ky_nhan}" target="_blank">🖊 Chữ ký người nhận</a>`:""}
+        ${p.link_pdf         ?`<a class="lnk" href="${p.link_pdf}"         target="_blank" style="font-weight:700">📄 PDF chứng từ</a>`:""}
+      </div>`;
+  } catch(e) {
+    document.getElementById("mBody").innerHTML=`<div class="al al-er">${e.message}</div>`;
+  }
+}
+function closeModal(e) {
+  if (!e || e.target===document.getElementById("ov"))
+    document.getElementById("ov").classList.remove("open");
+}
+
+// ══════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════
+function showAl(id, type, msg) {
+  const el = document.getElementById(id); if(!el) return;
+  el.innerHTML = `<div class="al al-${type}">${msg}</div>`;
+}
+function setBusy(id, busy, label) {
+  const el = document.getElementById(id); if(!el) return;
+  el.disabled = busy; el.textContent = label;
+}
+</script>
+</body>
+</html>
