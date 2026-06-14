@@ -6,271 +6,190 @@
 <meta name="theme-color" content="#1C2B1E">
 <title>NPL Manager</title>
 <style>
-/* ══ TOKENS ══════════════════════════════════════════ */
-:root {
-  --g9:#1C2B1E; --g7:#2D4A31; --g5:#3D6B42; --g3:#6A9E6F;
-  --g1:#C8E6CA; --g0:#EEF6EF;
-  --am:#D4860A; --am0:#FEF3DC;
-  --rd:#C0392B; --rd0:#FDECEA;
-  --w:#fff; --f8:#F8F9F8; --f1:#EFF0EF;
-  --f3:#C8CAC8; --f5:#6B6F6B; --f7:#3A3D3A; --f9:#1A1C1A;
-  --r:10px; --sh:0 2px 12px rgba(0,0,0,.08);
+:root{
+  --g9:#1C2B1E;--g7:#2D4A31;--g5:#3D6B42;--g3:#6A9E6F;--g1:#C8E6CA;--g0:#EEF6EF;
+  --am:#D4860A;--am0:#FEF3DC;--rd:#C0392B;--rd0:#FDECEA;
+  --w:#fff;--f8:#F8F9F8;--f1:#EFF0EF;--f3:#C8CAC8;--f5:#6B6F6B;--f7:#3A3D3A;--f9:#1A1C1A;
+  --r:10px;--sh:0 2px 8px rgba(0,0,0,.07);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-     background:var(--f8);color:var(--f9);min-height:100vh}
-
-/* ══ TOPBAR ══ */
-.topbar{background:var(--g9);color:var(--w);padding:0 16px;height:52px;
-        display:flex;align-items:center;justify-content:space-between;
-        position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.3)}
-.brand{font-size:15px;font-weight:600;letter-spacing:.01em;display:flex;align-items:center;gap:8px}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--f8);color:var(--f9);min-height:100vh}
+.topbar{background:var(--g9);color:var(--w);padding:0 16px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.brand{font-size:15px;font-weight:600;display:flex;align-items:center;gap:8px}
 .brand-dot{width:8px;height:8px;background:var(--g3);border-radius:50%}
-.user-info{font-size:12px;color:var(--g3);display:flex;align-items:center;gap:10px}
-.btn-out{background:none;border:1px solid var(--g7);color:var(--g3);
-         font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer}
+.uinfo{font-size:12px;color:var(--g3);display:flex;align-items:center;gap:10px}
+.btn-out{background:none;border:1px solid var(--g7);color:var(--g3);font-size:11px;padding:4px 10px;border-radius:6px;cursor:pointer}
 .btn-out:hover{background:var(--g7);color:var(--w)}
-
-/* ══ NAV ══ */
-.nav{background:var(--w);border-bottom:1px solid var(--f1);
-     display:flex;padding:0 16px;overflow-x:auto;gap:0}
-.nav-tab{font-size:13px;padding:13px 15px;border-bottom:2px solid transparent;
-         color:var(--f5);cursor:pointer;white-space:nowrap;transition:all .15s;user-select:none}
-.nav-tab.active{color:var(--g7);border-bottom-color:var(--g5);font-weight:500}
-.nav-tab:hover:not(.active){color:var(--f7)}
-.badge{background:var(--am);color:var(--w);font-size:10px;
-       padding:1px 5px;border-radius:8px;margin-left:4px;display:none}
-
-/* ══ MAIN ══ */
-main{max-width:640px;margin:0 auto;padding:20px 14px}
+.nav{background:var(--w);border-bottom:1px solid var(--f1);display:flex;padding:0 16px;overflow-x:auto}
+.ntab{font-size:13px;padding:13px 15px;border-bottom:2px solid transparent;color:var(--f5);cursor:pointer;white-space:nowrap;user-select:none}
+.ntab.active{color:var(--g7);border-bottom-color:var(--g5);font-weight:500}
+.ntab:hover:not(.active){color:var(--f7)}
+.badge{background:var(--am);color:var(--w);font-size:10px;padding:1px 5px;border-radius:8px;margin-left:4px;display:none}
+main{max-width:660px;margin:0 auto;padding:18px 14px}
 .page{display:none}.page.active{display:block}
-
-/* ══ CARDS ══ */
-.card{background:var(--w);border-radius:var(--r);border:1px solid var(--f1);
-      padding:18px;margin-bottom:14px;box-shadow:var(--sh)}
-.card-title{font-size:13px;font-weight:600;color:var(--f9);margin-bottom:14px;
-            display:flex;align-items:center;gap:7px}
-.card-title::before{content:'';width:3px;height:15px;background:var(--g5);
-                    border-radius:2px;display:block;flex-shrink:0}
-
-/* ══ FORM ══ */
+.card{background:var(--w);border-radius:var(--r);border:1px solid var(--f1);padding:16px 18px;margin-bottom:14px;box-shadow:var(--sh)}
+.card-title{font-size:13px;font-weight:600;color:var(--f9);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.card-title::before{content:'';width:3px;height:15px;background:var(--g5);border-radius:2px;display:block;flex-shrink:0}
 .fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .f{display:flex;flex-direction:column;gap:4px}
 .f.full{grid-column:1/-1}
 label{font-size:11px;color:var(--f5);font-weight:500;letter-spacing:.02em}
-input,select{border:1px solid var(--f3);border-radius:8px;padding:9px 11px;
-             font-size:13px;color:var(--f9);background:var(--w);
-             transition:border .15s;width:100%}
-input:focus,select:focus{outline:none;border-color:var(--g5);
-                          box-shadow:0 0 0 3px rgba(61,107,66,.12)}
+input,select{border:1px solid var(--f3);border-radius:8px;padding:9px 11px;font-size:13px;color:var(--f9);background:var(--w);transition:border .15s;width:100%}
+input:focus,select:focus{outline:none;border-color:var(--g5);box-shadow:0 0 0 3px rgba(61,107,66,.1)}
+input[readonly]{background:var(--f8);color:var(--f5);cursor:default}
 input::placeholder{color:var(--f3)}
-
-/* ══ SIG PAD ══ */
-.sig-wrap{border:1.5px dashed var(--f3);border-radius:8px;background:var(--f8);
-          position:relative;overflow:hidden}
-.sig-wrap canvas{display:block;touch-action:none;cursor:crosshair;width:100%}
-.sig-hint{position:absolute;bottom:8px;right:10px;font-size:11px;
-          color:var(--f3);pointer-events:none;transition:opacity .2s}
-.sig-signed .sig-hint{opacity:0}
-.sig-row{display:flex;justify-content:flex-end;margin-top:5px}
-.btn-clr{background:none;border:1px solid var(--f3);color:var(--f5);
-         font-size:11px;padding:3px 10px;border-radius:5px;cursor:pointer}
-.btn-clr:hover{border-color:var(--rd);color:var(--rd)}
-
-/* ══ BUTTONS ══ */
-.btn{display:flex;align-items:center;justify-content:center;gap:6px;
-     font-size:14px;font-weight:500;padding:11px 20px;border-radius:8px;
-     border:none;cursor:pointer;transition:all .15s;width:100%;margin-top:14px}
-.btn-p{background:var(--g7);color:var(--w)}
-.btn-p:hover{background:var(--g9)}
-.btn-p:disabled{background:var(--f3);cursor:not-allowed}
-.btn-s{background:var(--f1);color:var(--f7);width:auto;margin:0;padding:9px 16px}
+/* NPL ITEM */
+.npl-list{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.npl-item{background:var(--f8);border:1px solid var(--f1);border-radius:8px;padding:12px 14px;position:relative}
+.npl-item-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.npl-item-num{font-size:11px;font-weight:600;color:var(--g7);background:var(--g0);padding:2px 8px;border-radius:10px}
+.btn-remove{background:none;border:1px solid var(--f3);color:var(--f5);font-size:11px;padding:3px 10px;border-radius:5px;cursor:pointer}
+.btn-remove:hover{border-color:var(--rd);color:var(--rd)}
+/* TỒN KHO TAG */
+.stock-tag{font-size:11px;padding:3px 9px;border-radius:5px;font-weight:500;margin-top:5px;display:inline-block}
+.stock-ok{background:var(--g0);color:var(--g7)}
+.stock-low{background:var(--am0);color:var(--am)}
+.stock-empty{background:var(--rd0);color:var(--rd)}
+/* BUTTONS */
+.btn{display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:500;padding:10px 18px;border-radius:8px;border:none;cursor:pointer;transition:all .15s}
+.btn-p{background:var(--g7);color:var(--w);width:100%;margin-top:12px}
+.btn-p:hover{background:var(--g9)}.btn-p:disabled{background:var(--f3);cursor:not-allowed}
+.btn-add{background:var(--g0);color:var(--g7);border:1.5px dashed var(--g3);width:100%;font-size:13px;padding:9px}
+.btn-add:hover{background:var(--g1)}
+.btn-s{background:var(--f1);color:var(--f7);width:auto;margin:0;padding:8px 14px;font-size:13px}
 .btn-s:hover{background:var(--f3)}
-
-/* ══ STATUS ══ */
+/* STATUS */
 .st{display:inline-block;font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px}
-.st-done{background:var(--g0);color:var(--g7)}
-.st-wait{background:var(--am0);color:var(--am)}
-
-/* ══ ALERTS ══ */
-.al{padding:11px 13px;border-radius:8px;font-size:13px;margin-bottom:12px;
-    display:flex;align-items:flex-start;gap:7px;line-height:1.5}
+.st-done{background:var(--g0);color:var(--g7)}.st-wait{background:var(--am0);color:var(--am)}
+/* ALERT */
+.al{padding:11px 13px;border-radius:8px;font-size:13px;margin-bottom:12px;line-height:1.5}
 .al-ok{background:var(--g0);color:var(--g7);border:1px solid var(--g1)}
 .al-er{background:var(--rd0);color:var(--rd);border:1px solid #F5C6C2}
 .al-in{background:var(--am0);color:var(--am);border:1px solid #F5DFA0}
-
-/* ══ PHIẾU LIST ══ */
-.pi{background:var(--w);border:1px solid var(--f1);border-radius:var(--r);
-    padding:13px 15px;margin-bottom:9px;cursor:pointer;transition:border-color .15s;
-    box-shadow:0 1px 4px rgba(0,0,0,.04)}
+/* LIST */
+.pi{background:var(--w);border:1px solid var(--f1);border-radius:var(--r);padding:12px 15px;margin-bottom:9px;cursor:pointer;transition:border-color .15s}
 .pi:hover{border-color:var(--g3)}
 .pi-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .pi-id{font-size:12px;font-weight:600;color:var(--g7);font-family:monospace}
-.pi-npl{font-size:14px;font-weight:500;margin:3px 0;color:var(--f9)}
+.pi-npl{font-size:13px;font-weight:500;margin:3px 0;color:var(--f9)}
 .pi-meta{font-size:11px;color:var(--f5)}
-
-/* ══ LOGIN ══ */
+/* LOGIN */
 .lw{max-width:340px;margin:56px auto;padding:0 14px}
 .lo{text-align:center;margin-bottom:24px}
 .lo h1{font-size:22px;color:var(--g9);font-weight:700}
 .lo p{font-size:13px;color:var(--f5);margin-top:4px}
-
-/* ══ MODAL ══ */
-.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);
-    z-index:200;align-items:center;justify-content:center;padding:14px}
+/* MODAL */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;padding:14px}
 .ov.open{display:flex}
-.modal{background:var(--w);border-radius:var(--r);width:100%;max-width:480px;
-       max-height:88vh;overflow-y:auto;padding:22px;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.modal{background:var(--w);border-radius:var(--r);width:100%;max-width:500px;max-height:88vh;overflow-y:auto;padding:22px}
 .mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
-.mt{font-size:16px;font-weight:600;font-family:monospace}
-.mc{background:none;border:none;font-size:22px;cursor:pointer;color:var(--f5);
-    line-height:1;padding:0 2px}
-.dr{display:flex;justify-content:space-between;padding:8px 0;
-    border-bottom:1px solid var(--f1);font-size:13px}
-.dl{color:var(--f5)}.dv{font-weight:500;max-width:58%;text-align:right}
+.mt{font-size:15px;font-weight:600;font-family:monospace}
+.mc{background:none;border:none;font-size:22px;cursor:pointer;color:var(--f5)}
+.dr{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--f1);font-size:13px}
+.dl{color:var(--f5)}.dv{font-weight:500;max-width:60%;text-align:right}
+.npl-table{width:100%;border-collapse:collapse;font-size:12px;margin:10px 0}
+.npl-table th{background:var(--f8);color:var(--f5);padding:6px 8px;text-align:left;border-bottom:1px solid var(--f1);font-weight:500}
+.npl-table td{padding:6px 8px;border-bottom:1px solid var(--f1);color:var(--f9)}
 .links{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.stock-table{width:100%;border-collapse:collapse;font-size:12px}
+.stock-table th{background:var(--g9);color:var(--w);padding:8px 10px;text-align:left;font-weight:500}
+.stock-table td{padding:8px 10px;border-bottom:1px solid var(--f1);vertical-align:middle}
+.stock-table tr:hover td{background:var(--f8)}
+.bar-wrap{width:60px;background:var(--f1);border-radius:4px;height:5px;display:inline-block;vertical-align:middle;margin-right:5px}
+.bar{height:5px;border-radius:4px}
+.bar-ok{background:var(--g5)}.bar-low{background:var(--am)}.bar-empty{background:var(--rd)}
 .lnk{font-size:12px;color:var(--g7);text-decoration:none;font-weight:500}
 .lnk:hover{text-decoration:underline}
-
-/* ══ MISC ══ */
-.ld{text-align:center;padding:40px 20px;color:var(--f5)}
-.sp{width:26px;height:26px;border:3px solid var(--f1);border-top-color:var(--g5);
-    border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
+/* SIG PAD */
+.sig-wrap{border:1.5px dashed var(--f3);border-radius:8px;background:var(--f8);position:relative;overflow:hidden}
+.sig-wrap canvas{display:block;touch-action:none;cursor:crosshair;width:100%}
+.sig-hint{position:absolute;bottom:8px;right:10px;font-size:11px;color:var(--f3);pointer-events:none;transition:opacity .2s}
+.sig-signed .sig-hint{opacity:0}
+.sig-row{display:flex;justify-content:flex-end;margin-top:5px}
+.btn-clr{background:none;border:1px solid var(--f3);color:var(--f5);font-size:11px;padding:3px 10px;border-radius:5px;cursor:pointer}
+.btn-clr:hover{border-color:var(--rd);color:var(--rd)}
+/* MISC */
+.ld{text-align:center;padding:40px;color:var(--f5)}
+.sp{width:26px;height:26px;border:3px solid var(--f1);border-top-color:var(--g5);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 10px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty{text-align:center;padding:44px 20px;color:var(--f5)}
 .empty-ic{font-size:36px;margin-bottom:10px}
-.role-tag{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;margin-left:6px}
+.rt{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;margin-left:5px}
 .rt-admin{background:#EDE7F6;color:#5E35B1}
 .rt-issuer{background:var(--g0);color:var(--g7)}
 .rt-receiver{background:var(--am0);color:var(--am)}
-.divider{border:none;border-top:1px solid var(--f1);margin:14px 0}
 .search-row{display:flex;gap:8px}
 .search-row input{flex:1}
-
-@media(max-width:480px){
-  .fg{grid-template-columns:1fr}
-  .f.full{grid-column:1}
-}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px}
+.stat-box{text-align:center;padding:12px;border-radius:8px}
+.stat-num{font-size:24px;font-weight:700}
+.stat-lbl{font-size:11px;margin-top:2px}
+@media(max-width:480px){.fg{grid-template-columns:1fr}.f.full{grid-column:1}}
 </style>
 </head>
 <body>
 
-<!-- ════════ APPS SCRIPT URL — QUAN TRỌNG ════════ -->
 <script>
-// ⚠️ Tim thay đường dẫn này sau khi deploy Apps Script
-const GAS_URL = "https://script.google.com/macros/s/AKfycbyZHYWknB-EO-cACJK_fd7GlnS1P-yLXzFy5Zkoj05Xh4zb9G10bnZzHIit21CLBVdnVw/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbzViXKitBPAKrDZqkxkfokwWlKda_N6pfUTg5-7B2lffrIudYVvuUpSzf8ICaTun-CUNw/exec";
 </script>
 
-<!-- ════════ LOGIN ════════ -->
+<!-- LOGIN -->
 <div id="loginPage">
   <div class="lw">
-    <div class="lo">
-      <h1>📦 NPL Manager</h1>
-      <p>Hệ thống cấp phát nguyên phụ liệu</p>
-    </div>
+    <div class="lo"><h1>📦 NPL Manager</h1><p>Hệ thống cấp phát nguyên phụ liệu</p></div>
     <div class="card">
       <div id="lgAl"></div>
-      <div class="f" style="margin-bottom:11px">
-        <label>TÊN ĐĂNG NHẬP</label>
-        <input id="lgU" type="text" placeholder="username" autocomplete="username"/>
-      </div>
-      <div class="f">
-        <label>MẬT KHẨU</label>
-        <input id="lgP" type="password" placeholder="••••••" autocomplete="current-password"/>
-      </div>
+      <div class="f" style="margin-bottom:11px"><label>TÊN ĐĂNG NHẬP</label><input id="lgU" type="text" placeholder="username"/></div>
+      <div class="f"><label>MẬT KHẨU</label><input id="lgP" type="password" placeholder="••••••"/></div>
       <button class="btn btn-p" onclick="doLogin()" id="lgBtn">Đăng nhập</button>
     </div>
   </div>
 </div>
 
-<!-- ════════ APP ════════ -->
+<!-- APP -->
 <div id="appShell" style="display:none">
   <header class="topbar">
-    <div class="brand">
-      <div class="brand-dot"></div>
-      NPL Manager
-    </div>
-    <div class="user-info">
-      <span id="uLabel"></span>
-      <button class="btn-out" onclick="doLogout()">Đăng xuất</button>
-    </div>
+    <div class="brand"><div class="brand-dot"></div>NPL Manager</div>
+    <div class="uinfo"><span id="uLabel"></span><button class="btn-out" onclick="doLogout()">Đăng xuất</button></div>
   </header>
-
   <nav class="nav" id="mainNav"></nav>
-
   <main>
-    <!-- TẠO PHIẾU (issuer) -->
+
+    <!-- TẠO PHIẾU -->
     <div id="pgNew" class="page">
       <div class="card">
-        <div class="card-title">Thông tin cấp phát</div>
+        <div class="card-title">Thông tin chung</div>
         <div id="newAl"></div>
         <div class="fg">
-          <div class="f">
-            <label>NGƯỜI CẤP PHÁT</label>
-            <input id="fCap" type="text" placeholder="Họ tên người cấp"/>
-          </div>
-          <div class="f">
-            <label>NGƯỜI NHẬN</label>
-            <input id="fNhan" type="text" placeholder="Họ tên người nhận"/>
-          </div>
-          <div class="f full">
-            <label>CHỌN MÃ HÀNG / NPL</label>
-            <select id="fNPL" onchange="onNPLChange()"><option value="">— Chọn mã hàng —</option></select>
-          </div>
-          <div class="f">
-            <label>MÃ HÀNG</label>
-            <input id="fMaHang" type="text" readonly placeholder="Tự điền khi chọn NPL" style="background:var(--f8);color:var(--f5)"/>
-          </div>
-          <div class="f">
-            <label>TÊN NPL</label>
-            <input id="fTenNPL" type="text" readonly placeholder="Tự điền khi chọn NPL" style="background:var(--f8);color:var(--f5)"/>
-          </div>
-          <div class="f">
-            <label>MÀU SẮC</label>
-            <input id="fMau" type="text" readonly placeholder="Tự điền khi chọn NPL" style="background:var(--f8);color:var(--f5)"/>
-          </div>
-          <div class="f">
-            <label>PO</label>
-            <input id="fPO" type="text" readonly placeholder="Tự điền khi chọn NPL" style="background:var(--f8);color:var(--f5)"/>
-          </div>
-          <div class="f">
-            <label>SỐ LƯỢNG</label>
-            <input id="fSL" type="text" placeholder="Nhập số lượng"/>
-          </div>
-          <div class="f">
-            <label>ĐƠN VỊ TÍNH</label>
-            <input id="fDonVi" type="text" readonly placeholder="Tự điền khi chọn NPL" style="background:var(--f8);color:var(--f5)"/>
-          </div>
-          <div class="f full">
-            <label>GHI CHÚ (tuỳ chọn)</label>
-            <input id="fGC" type="text" placeholder=""/>
-          </div>
+          <div class="f"><label>NGƯỜI CẤP PHÁT</label><input id="fCap" type="text" placeholder="Họ tên người cấp"/></div>
+          <div class="f"><label>NGƯỜI NHẬN</label><input id="fNhan" type="text" placeholder="Họ tên người nhận"/></div>
+          <div class="f full"><label>GHI CHÚ (tuỳ chọn)</label><input id="fGC" type="text" placeholder=""/></div>
         </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Danh sách NPL</div>
+        <div class="npl-list" id="nplList"></div>
+        <button class="btn btn-add" onclick="addNPLItem()">+ Thêm NPL</button>
       </div>
 
       <div class="card">
         <div class="card-title">Chữ ký người cấp phát</div>
-        <div class="sig-wrap" id="swCap">
-          <canvas id="scCap" height="120"></canvas>
-          <span class="sig-hint">Ký tên tại đây bằng chuột hoặc ngón tay</span>
-        </div>
+        <div class="sig-wrap" id="swCap"><canvas id="scCap" height="110"></canvas><span class="sig-hint">Ký tên tại đây</span></div>
         <div class="sig-row"><button class="btn-clr" onclick="clrSig('Cap')">Ký lại</button></div>
       </div>
-
       <button class="btn btn-p" id="btnNew" onclick="submitPhieu()">Tạo phiếu & lưu chữ ký</button>
     </div>
 
-    <!-- KÝ NHẬN (receiver) -->
+    <!-- KÝ NHẬN -->
     <div id="pgSign" class="page">
       <div class="card">
         <div class="card-title">Tìm phiếu cần ký</div>
         <div class="search-row">
-          <input id="sPhieuId" type="text" placeholder="Nhập mã phiếu  VD: PHI-20250611-001"
-                 onkeydown="if(event.key==='Enter') loadForSign()"/>
+          <input id="sPhieuId" type="text" placeholder="Nhập mã phiếu  VD: PHI-20250611-001" onkeydown="if(event.key==='Enter')loadForSign()"/>
           <button class="btn btn-s" onclick="loadForSign()">Tìm</button>
         </div>
       </div>
-
       <div id="signDetail" style="display:none">
         <div class="card">
           <div class="card-title">Thông tin phiếu</div>
@@ -278,10 +197,7 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbyZHYWknB-EO-cACJK_fd7G
         </div>
         <div class="card">
           <div class="card-title">Chữ ký xác nhận</div>
-          <div class="sig-wrap" id="swNhan">
-            <canvas id="scNhan" height="120"></canvas>
-            <span class="sig-hint">Ký tên tại đây bằng chuột hoặc ngón tay</span>
-          </div>
+          <div class="sig-wrap" id="swNhan"><canvas id="scNhan" height="110"></canvas><span class="sig-hint">Ký tên tại đây</span></div>
           <div class="sig-row"><button class="btn-clr" onclick="clrSig('Nhan')">Ký lại</button></div>
         </div>
         <div id="signAl"></div>
@@ -289,28 +205,37 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbyZHYWknB-EO-cACJK_fd7G
       </div>
     </div>
 
-    <!-- LỊCH SỬ (tất cả) -->
-    <div id="pgList" class="page">
-      <div id="listBox"><div class="ld"><div class="sp"></div>Đang tải...</div></div>
+    <!-- LỊCH SỬ -->
+    <div id="pgList" class="page"><div id="listBox"><div class="ld"><div class="sp"></div>Đang tải...</div></div></div>
+
+    <!-- TỒN KHO (admin) -->
+    <div id="pgStock" class="page">
+      <div class="card">
+        <div class="card-title">Kiểm tra tồn kho</div>
+        <div class="fg">
+          <div class="f">
+            <label>LỌC THEO MÃ HÀNG</label>
+            <select id="filterMaHang" onchange="filterStock()">
+              <option value="">— Tất cả mã hàng —</option>
+            </select>
+          </div>
+          <div class="f">
+            <label>TÌM KIẾM</label>
+            <input id="filterSearch" type="text" placeholder="Tên NPL, màu, PO..." oninput="filterStock()"/>
+          </div>
+        </div>
+      </div>
+      <div id="stockBox"><div class="ld"><div class="sp"></div>Đang tải...</div></div>
     </div>
 
-    <!-- DASHBOARD ADMIN -->
+    <!-- ADMIN -->
     <div id="pgAdmin" class="page">
       <div class="card">
         <div class="card-title">Tổng quan</div>
-        <div id="statsBox" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:4px">
-          <div style="text-align:center;padding:12px;background:var(--f8);border-radius:8px">
-            <div style="font-size:24px;font-weight:700;color:var(--g7)" id="statTotal">—</div>
-            <div style="font-size:11px;color:var(--f5)">Tổng phiếu</div>
-          </div>
-          <div style="text-align:center;padding:12px;background:var(--am0);border-radius:8px">
-            <div style="font-size:24px;font-weight:700;color:var(--am)" id="statWait">—</div>
-            <div style="font-size:11px;color:var(--am)">Chờ ký nhận</div>
-          </div>
-          <div style="text-align:center;padding:12px;background:var(--g0);border-radius:8px">
-            <div style="font-size:24px;font-weight:700;color:var(--g7)" id="statDone">—</div>
-            <div style="font-size:11px;color:var(--g5)">Hoàn tất</div>
-          </div>
+        <div class="stat-grid">
+          <div class="stat-box" style="background:var(--f8)"><div class="stat-num" id="stTotal" style="color:var(--g7)">—</div><div class="stat-lbl" style="color:var(--f5)">Tổng phiếu</div></div>
+          <div class="stat-box" style="background:var(--am0)"><div class="stat-num" id="stWait" style="color:var(--am)">—</div><div class="stat-lbl" style="color:var(--am)">Chờ ký nhận</div></div>
+          <div class="stat-box" style="background:var(--g0)"><div class="stat-num" id="stDone" style="color:var(--g7)">—</div><div class="stat-lbl" style="color:var(--g5)">Hoàn tất</div></div>
         </div>
       </div>
       <div id="adminBox"><div class="ld"><div class="sp"></div>Đang tải...</div></div>
@@ -318,43 +243,38 @@ const GAS_URL = "https://script.google.com/macros/s/AKfycbyZHYWknB-EO-cACJK_fd7G
   </main>
 </div>
 
-<!-- ════════ MODAL CHI TIẾT ════════ -->
+<!-- MODAL -->
 <div class="ov" id="ov" onclick="closeModal(event)">
   <div class="modal">
-    <div class="mh">
-      <span class="mt" id="mTitle">Chi tiết</span>
-      <button class="mc" onclick="closeModal()">×</button>
-    </div>
+    <div class="mh"><span class="mt" id="mTitle">Chi tiết</span><button class="mc" onclick="closeModal()">×</button></div>
     <div id="mBody"><div class="ld"><div class="sp"></div></div></div>
   </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════
-//  STATE
-// ══════════════════════════════════════════
-let TOKEN    = localStorage.getItem("npl_tk")   || "";
+// ══════════ STATE ══════════
+const API    = '';
+let TOKEN    = localStorage.getItem("npl_tk") || "";
 let USERINFO = JSON.parse(localStorage.getItem("npl_ui") || "null");
+let NPL_DATA = [];
 let SIGN_ID  = "";
+let nplCount = 0;
 
 const TABS = {
-  issuer  : [{id:"pgNew",  label:"Tạo phiếu"},    {id:"pgList",  label:"Lịch sử"}],
-  receiver: [{id:"pgSign", label:"Ký nhận"},       {id:"pgList",  label:"Lịch sử"}],
-  admin   : [{id:"pgAdmin",label:"Dashboard"},     {id:"pgList",  label:"Tất cả phiếu"}],
+  issuer  : [{id:"pgNew",   label:"Tạo phiếu"},  {id:"pgList",  label:"Lịch sử"}],
+  receiver: [{id:"pgSign",  label:"Ký nhận"},     {id:"pgList",  label:"Lịch sử"}],
+  admin   : [{id:"pgAdmin", label:"Dashboard"},   {id:"pgList",  label:"Tất cả phiếu"}, {id:"pgStock", label:"Tồn kho"}],
 };
 
-// ══════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════
+// ══════════ INIT ══════════
 window.addEventListener("DOMContentLoaded", () => {
   setupSig("Cap"); setupSig("Nhan");
   if (TOKEN && USERINFO) showApp();
+  else document.getElementById("loginPage").style.display = "block";
 });
 
-// ══════════════════════════════════════════
-//  API CALL
-// ══════════════════════════════════════════
-async function api(action, body={}) {
+// ══════════ API ══════════
+async function api(action, body = {}) {
   const res  = await fetch(GAS_URL, {
     method:"POST", redirect:"follow",
     headers:{"Content-Type":"text/plain"},
@@ -365,24 +285,21 @@ async function api(action, body={}) {
   return data;
 }
 
-// ══════════════════════════════════════════
-//  AUTH
-// ══════════════════════════════════════════
+// ══════════ AUTH ══════════
 async function doLogin() {
   const u = document.getElementById("lgU").value.trim();
   const p = document.getElementById("lgP").value;
   if (!u || !p) return showAl("lgAl","er","Vui lòng nhập đầy đủ thông tin");
   setBusy("lgBtn", true, "Đang đăng nhập...");
   try {
-    const r = await api("login", {username:u, password:p});
+    const r  = await api("login", {username:u, password:p});
     TOKEN    = r.token;
     USERINFO = {role:r.role, ho_ten:r.ho_ten};
     localStorage.setItem("npl_tk", TOKEN);
     localStorage.setItem("npl_ui", JSON.stringify(USERINFO));
     showApp();
-  } catch(e) {
-    showAl("lgAl","er", e.message);
-  } finally { setBusy("lgBtn", false, "Đăng nhập"); }
+  } catch(e) { showAl("lgAl","er", e.message); }
+  finally    { setBusy("lgBtn", false, "Đăng nhập"); }
 }
 
 function doLogout() {
@@ -391,187 +308,316 @@ function doLogout() {
   location.reload();
 }
 
-// ══════════════════════════════════════════
-//  SHOW APP
-// ══════════════════════════════════════════
 function showApp() {
   document.getElementById("loginPage").style.display = "none";
   document.getElementById("appShell").style.display  = "block";
-
-  const roleLabel = {admin:"Admin",issuer:"Người cấp phát",receiver:"Người nhận"}[USERINFO.role] || USERINFO.role;
+  const rl = {admin:"Admin",issuer:"Người cấp phát",receiver:"Người nhận"};
   document.getElementById("uLabel").innerHTML =
-    `${USERINFO.ho_ten} <span class="role-tag rt-${USERINFO.role}">${roleLabel}</span>`;
-
-  // Build nav tabs
-  const nav  = document.getElementById("mainNav");
+    `${USERINFO.ho_ten} <span class="rt rt-${USERINFO.role}">${rl[USERINFO.role]||USERINFO.role}</span>`;
   const tabs = TABS[USERINFO.role] || TABS.receiver;
-  nav.innerHTML = tabs.map((t,i) =>
-    `<div class="nav-tab${i===0?" active":""}" data-page="${t.id}" onclick="switchTab(this)">${t.label}</div>`
+  document.getElementById("mainNav").innerHTML = tabs.map((t,i) =>
+    `<div class="ntab${i===0?" active":""}" data-page="${t.id}" onclick="switchTab(this)">${t.label}</div>`
   ).join("");
-
-  // Auto-fill tên người cấp nếu là issuer
-  if (USERINFO.role === "issuer") {
-    document.getElementById("fCap").value = USERINFO.ho_ten;
-  }
-
-  // Show first page
+  if (USERINFO.role === "issuer") document.getElementById("fCap").value = USERINFO.ho_ten;
   document.getElementById(tabs[0].id).classList.add("active");
   loadNPL();
-
-  // Load data cho tab đầu
-  if (USERINFO.role === "admin")    loadAdmin();
-  if (USERINFO.role === "receiver") { /* chờ user nhập mã */ }
-  if (USERINFO.role === "issuer")   { /* trang tạo phiếu trống */ }
+  if (USERINFO.role === "admin") loadAdmin();
 }
 
-// ══════════════════════════════════════════
-//  NAVIGATION
-// ══════════════════════════════════════════
+// ══════════ NAV ══════════
 function switchTab(el) {
-  document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+  document.querySelectorAll(".ntab").forEach(t => t.classList.remove("active"));
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   el.classList.add("active");
   const pid = el.dataset.page;
   document.getElementById(pid)?.classList.add("active");
   if (pid === "pgList")  loadList();
   if (pid === "pgAdmin") loadAdmin();
+  if (pid === "pgStock") loadStockPage();
 }
 
-// ══════════════════════════════════════════
-//  SIGNATURE PAD
-// ══════════════════════════════════════════
+// ══════════ SIG PAD ══════════
 const SIGS = {};
 function setupSig(id) {
   const canvas = document.getElementById("sc" + id);
   if (!canvas) return;
-  canvas.width = canvas.parentElement.offsetWidth || 560;
+  canvas.width = canvas.parentElement.offsetWidth || 580;
   const ctx = canvas.getContext("2d");
-  ctx.strokeStyle = "#1A1C1A"; ctx.lineWidth = 2;
-  ctx.lineCap = "round"; ctx.lineJoin = "round";
+  ctx.strokeStyle="#1A1C1A"; ctx.lineWidth=2; ctx.lineCap="round"; ctx.lineJoin="round";
   let drawing = false;
   SIGS[id] = {ctx, canvas, ok:false};
-
-  const pos = e => {
-    const r   = canvas.getBoundingClientRect();
-    const src = e.touches ? e.touches[0] : e;
-    return {x:(src.clientX-r.left)*canvas.width/r.width,
-            y:(src.clientY-r.top)*canvas.height/r.height};
-  };
-  const start = e => { e.preventDefault(); drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); };
-  const move  = e => { e.preventDefault(); if(!drawing) return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); SIGS[id].ok=true; document.getElementById("sw"+id)?.classList.add("sig-signed"); };
-  const stop  = ()  => drawing=false;
-  canvas.addEventListener("mousedown", start);
-  canvas.addEventListener("mousemove", move);
-  canvas.addEventListener("mouseup",   stop);
-  canvas.addEventListener("mouseleave",stop);
-  canvas.addEventListener("touchstart",start,{passive:false});
-  canvas.addEventListener("touchmove", move, {passive:false});
-  canvas.addEventListener("touchend",  stop);
+  const pos = e => { const r=canvas.getBoundingClientRect(),src=e.touches?e.touches[0]:e; return {x:(src.clientX-r.left)*canvas.width/r.width,y:(src.clientY-r.top)*canvas.height/r.height}; };
+  const start=e=>{e.preventDefault();drawing=true;const p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)};
+  const move =e=>{e.preventDefault();if(!drawing)return;const p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();SIGS[id].ok=true;document.getElementById("sw"+id)?.classList.add("sig-signed")};
+  const stop =()=>drawing=false;
+  canvas.addEventListener("mousedown",start); canvas.addEventListener("mousemove",move);
+  canvas.addEventListener("mouseup",stop);    canvas.addEventListener("mouseleave",stop);
+  canvas.addEventListener("touchstart",start,{passive:false}); canvas.addEventListener("touchmove",move,{passive:false});
+  canvas.addEventListener("touchend",stop);
 }
-function clrSig(id) {
-  const s = SIGS[id]; if(!s) return;
-  s.ctx.clearRect(0,0,s.canvas.width,s.canvas.height);
-  s.ok=false; document.getElementById("sw"+id)?.classList.remove("sig-signed");
-}
-const getSig = id => SIGS[id]?.canvas.toDataURL("image/png");
+function clrSig(id){const s=SIGS[id];if(!s)return;s.ctx.clearRect(0,0,s.canvas.width,s.canvas.height);s.ok=false;document.getElementById("sw"+id)?.classList.remove("sig-signed")}
+const getSig=id=>SIGS[id]?.canvas.toDataURL("image/png");
 
-// ══════════════════════════════════════════
-//  NPL DROPDOWN
-// ══════════════════════════════════════════
-let NPL_DATA = [];
-
+// ══════════ NPL DATA ══════════
 async function loadNPL() {
   try {
-    const r   = await api("getNPL");
-    NPL_DATA  = r.data;
-    const sel = document.getElementById("fNPL");
-    sel.innerHTML = '<option value="">— Chọn mã hàng —</option>';
-    r.data.forEach((n, i) => {
-      const o = document.createElement("option");
-      o.value = i;
-      // Hiển thị: Mã hàng — Tên NPL — Màu — PO
-      o.textContent = [n.ma_hang, n.ten_npl, n.mau_sac, n.po].filter(Boolean).join("  |  ");
-      sel.appendChild(o);
-    });
+    const r  = await api("getNPL");
+    NPL_DATA = r.data;
+    // Nếu chưa có dòng NPL nào → thêm 1 dòng mặc định
+    if (document.getElementById("nplList").children.length === 0) addNPLItem();
   } catch {}
 }
 
-function onNPLChange() {
-  const idx = document.getElementById("fNPL").value;
-  if (idx === "" || !NPL_DATA[idx]) {
-    ["fMaHang","fTenNPL","fMau","fPO","fDonVi"].forEach(id => document.getElementById(id).value = "");
-    return;
-  }
-  const n = NPL_DATA[idx];
-  document.getElementById("fMaHang").value = n.ma_hang;
-  document.getElementById("fTenNPL").value = n.ten_npl;
-  document.getElementById("fMau").value    = n.mau_sac;
-  document.getElementById("fPO").value     = n.po;
-  document.getElementById("fDonVi").value  = n.don_vi;
+// ══════════ CASCADE DROPDOWN ══════════
+function getMaHangList() {
+  return [...new Set(NPL_DATA.map(n => n.ma_hang))].sort();
+}
+function getTenNPLList(maHang) {
+  return [...new Set(NPL_DATA.filter(n => n.ma_hang === maHang).map(n => n.ten_npl))].sort();
+}
+function getMauList(maHang, tenNPL) {
+  return [...new Set(NPL_DATA.filter(n => n.ma_hang === maHang && n.ten_npl === tenNPL).map(n => n.mau_sac))].sort();
+}
+function getPOList(maHang, tenNPL, mau) {
+  return [...new Set(NPL_DATA.filter(n => n.ma_hang === maHang && n.ten_npl === tenNPL && n.mau_sac === mau).map(n => n.po))].sort();
+}
+function getNPLItem(maHang, tenNPL, mau, po) {
+  return NPL_DATA.find(n => n.ma_hang === maHang && n.ten_npl === tenNPL && n.mau_sac === mau && n.po === po);
 }
 
-// ══════════════════════════════════════════
-//  TẠO PHIẾU
-// ══════════════════════════════════════════
-async function submitPhieu() {
-  const nguoi_cap = document.getElementById("fCap").value.trim();
-  const nguoi_nhan= document.getElementById("fNhan").value.trim();
-  const ma_hang   = document.getElementById("fMaHang").value.trim();
-  const ten_npl   = document.getElementById("fTenNPL").value.trim();
-  const mau_sac   = document.getElementById("fMau").value.trim();
-  const po        = document.getElementById("fPO").value.trim();
-  const don_vi    = document.getElementById("fDonVi").value.trim();
-  const so_luong  = document.getElementById("fSL").value.trim();
-  const ghi_chu   = document.getElementById("fGC").value.trim();
+function buildSelect(options, placeholder, cls, onchg) {
+  return `<select class="${cls}" onchange="${onchg}">
+    <option value="">— ${placeholder} —</option>
+    ${options.map(o => `<option value="${o}">${o}</option>`).join("")}
+  </select>`;
+}
 
-  if (!nguoi_cap||!nguoi_nhan||!ma_hang||!so_luong)
-    return showAl("newAl","er","Vui lòng điền đầy đủ thông tin và chọn mã hàng");
-  if (!SIGS["Cap"]?.ok)
-    return showAl("newAl","er","Người cấp phát chưa ký tên");
+// ══════════ THÊM / XÓA DÒNG NPL ══════════
+function addNPLItem() {
+  nplCount++;
+  const idx  = nplCount;
+  const list = document.getElementById("nplList");
+  const div  = document.createElement("div");
+  div.className = "npl-item";
+  div.id = `npl_${idx}`;
+  div.innerHTML = `
+    <div class="npl-item-head">
+      <span class="npl-item-num">NPL #${list.children.length + 1}</span>
+      <button class="btn-remove" onclick="removeNPL(${idx})">Xoá</button>
+    </div>
+    <div class="fg">
+      <div class="f">
+        <label>MÃ HÀNG</label>
+        <select id="mh_${idx}" onchange="onMaHangChange(${idx})">
+          <option value="">— Chọn mã hàng —</option>
+          ${getMaHangList().map(m=>`<option value="${m}">${m}</option>`).join("")}
+        </select>
+      </div>
+      <div class="f">
+        <label>TÊN NPL</label>
+        <select id="tn_${idx}" onchange="onTenNPLChange(${idx})" disabled>
+          <option value="">— Chọn tên NPL —</option>
+        </select>
+      </div>
+      <div class="f">
+        <label>MÀU SẮC</label>
+        <select id="ms_${idx}" onchange="onMauChange(${idx})" disabled>
+          <option value="">— Chọn màu —</option>
+        </select>
+      </div>
+      <div class="f">
+        <label>PO</label>
+        <select id="po_${idx}" onchange="onPOChange(${idx})" disabled>
+          <option value="">— Chọn PO —</option>
+        </select>
+      </div>
+      <div class="f">
+        <label>ĐƠN VỊ TÍNH</label>
+        <input id="dv_${idx}" type="text" readonly placeholder="Tự điền"/>
+      </div>
+      <div class="f full">
+        <label>SỐ LƯỢNG XUẤT</label>
+        <input id="sl_${idx}" type="number" min="1" placeholder="Nhập số lượng cần xuất" oninput="checkStockInput(${idx})"/>
+      </div>
+    </div>
+    <div id="stock_${idx}" style="margin-top:6px"></div>`;
+  list.appendChild(div);
+  renumberNPL();
+}
+
+function removeNPL(idx) {
+  const el = document.getElementById(`npl_${idx}`);
+  if (el) el.remove();
+  renumberNPL();
+}
+
+function renumberNPL() {
+  document.querySelectorAll(".npl-item-num").forEach((el, i) => {
+    el.textContent = `NPL #${i + 1}`;
+  });
+}
+
+// ══════════ CASCADE CHANGE ══════════
+function onMaHangChange(idx) {
+  const maHang = document.getElementById(`mh_${idx}`).value;
+  const tnSel  = document.getElementById(`tn_${idx}`);
+  const msSel  = document.getElementById(`ms_${idx}`);
+  const poSel  = document.getElementById(`po_${idx}`);
+
+  tnSel.innerHTML = '<option value="">— Chọn tên NPL —</option>';
+  msSel.innerHTML = '<option value="">— Chọn màu —</option>';
+  poSel.innerHTML = '<option value="">— Chọn PO —</option>';
+  document.getElementById(`sl_${idx}`).value = "";
+  document.getElementById(`dv_${idx}`).value = "";
+  document.getElementById(`stock_${idx}`).innerHTML = "";
+
+  if (!maHang) { tnSel.disabled=true; msSel.disabled=true; poSel.disabled=true; return; }
+  getTenNPLList(maHang).forEach(t => {
+    const o=document.createElement("option"); o.value=o.textContent=t; tnSel.appendChild(o);
+  });
+  tnSel.disabled=false; msSel.disabled=true; poSel.disabled=true;
+}
+
+function onTenNPLChange(idx) {
+  const maHang = document.getElementById(`mh_${idx}`).value;
+  const tenNPL = document.getElementById(`tn_${idx}`).value;
+  const msSel  = document.getElementById(`ms_${idx}`);
+  const poSel  = document.getElementById(`po_${idx}`);
+
+  msSel.innerHTML = '<option value="">— Chọn màu —</option>';
+  poSel.innerHTML = '<option value="">— Chọn PO —</option>';
+  document.getElementById(`sl_${idx}`).value = "";
+  document.getElementById(`dv_${idx}`).value = "";
+  document.getElementById(`stock_${idx}`).innerHTML = "";
+
+  if (!tenNPL) { msSel.disabled=true; poSel.disabled=true; return; }
+  getMauList(maHang, tenNPL).forEach(m => {
+    const o=document.createElement("option"); o.value=o.textContent=m; msSel.appendChild(o);
+  });
+  msSel.disabled=false; poSel.disabled=true;
+}
+
+function onMauChange(idx) {
+  const maHang = document.getElementById(`mh_${idx}`).value;
+  const tenNPL = document.getElementById(`tn_${idx}`).value;
+  const mau    = document.getElementById(`ms_${idx}`).value;
+  const poSel  = document.getElementById(`po_${idx}`);
+
+  poSel.innerHTML = '<option value="">— Chọn PO —</option>';
+  document.getElementById(`sl_${idx}`).value = "";
+  document.getElementById(`dv_${idx}`).value = "";
+  document.getElementById(`stock_${idx}`).innerHTML = "";
+
+  if (!mau) { poSel.disabled=true; return; }
+  getPOList(maHang, tenNPL, mau).forEach(p => {
+    const o=document.createElement("option"); o.value=o.textContent=p; poSel.appendChild(o);
+  });
+  poSel.disabled=false;
+}
+
+async function onPOChange(idx) {
+  const maHang = document.getElementById(`mh_${idx}`).value;
+  const tenNPL = document.getElementById(`tn_${idx}`).value;
+  const mau    = document.getElementById(`ms_${idx}`).value;
+  const po     = document.getElementById(`po_${idx}`).value;
+  if (!po) return;
+
+  // Tự điền ĐVT, để SL trống cho người phát nhập
+  const item = getNPLItem(maHang, tenNPL, mau, po);
+  if (item) document.getElementById(`dv_${idx}`).value = item.don_vi;
+
+  // Hiện tồn kho ngay sau khi chọn xong PO
+  await checkStock(idx);
+}
+
+async function checkStock(idx) {
+  const maHang = document.getElementById(`mh_${idx}`)?.value;
+  const tenNPL = document.getElementById(`tn_${idx}`)?.value;
+  const mau    = document.getElementById(`ms_${idx}`)?.value;
+  const po     = document.getElementById(`po_${idx}`)?.value;
+  const sl     = parseFloat(document.getElementById(`sl_${idx}`)?.value) || 0;
+  const stockEl= document.getElementById(`stock_${idx}`);
+  if (!maHang || !tenNPL || !mau || !po || !stockEl) return;
+
+  try {
+    const r      = await api("getTonKho", {ma_hang:maHang, ten_npl:tenNPL, mau_sac:mau, po});
+    const conLai = r.con_lai;
+    const dv     = r.don_vi;
+    let cls="stock-ok", msg=`✓ Tồn kho còn lại: ${conLai} ${dv}`;
+    if (conLai <= 0)            { cls="stock-empty"; msg=`⚠ Hết hàng — Không thể xuất`; }
+    else if (sl > conLai)       { cls="stock-low";   msg=`⚠ Không đủ — Chỉ còn ${conLai} ${dv}`; }
+    else if (conLai < r.ton_kho * 0.2) { cls="stock-low"; msg=`⚠ Sắp hết — Còn lại ${conLai} ${dv}`; }
+    stockEl.innerHTML = `<span class="stock-tag ${cls}">${msg}</span>`;
+  } catch {}
+}
+
+// Gọi lại checkStock khi người dùng nhập SL
+function checkStockInput(idx) { checkStock(idx); }
+
+// ══════════ TẠO PHIẾU ══════════
+async function submitPhieu() {
+  const nguoi_cap  = document.getElementById("fCap").value.trim();
+  const nguoi_nhan = document.getElementById("fNhan").value.trim();
+  const ghi_chu    = document.getElementById("fGC").value.trim();
+
+  if (!nguoi_cap || !nguoi_nhan) return showAl("newAl","er","Vui lòng điền người cấp và người nhận");
+  if (!SIGS["Cap"]?.ok)          return showAl("newAl","er","Người cấp phát chưa ký tên");
+
+  // Thu thập danh sách NPL
+  const items  = document.querySelectorAll(".npl-item");
+  const danh_sach_npl = [];
+  for (const item of items) {
+    const idx  = item.id.replace("npl_","");
+    const mh   = document.getElementById(`mh_${idx}`)?.value;
+    const tn   = document.getElementById(`tn_${idx}`)?.value;
+    const ms   = document.getElementById(`ms_${idx}`)?.value;
+    const po   = document.getElementById(`po_${idx}`)?.value;
+    const sl   = parseFloat(document.getElementById(`sl_${idx}`)?.value);
+    const dv   = document.getElementById(`dv_${idx}`)?.value;
+    if (!mh || !tn || !ms || !sl) return showAl("newAl","er","Vui lòng điền đầy đủ thông tin cho tất cả NPL");
+    danh_sach_npl.push({ma_hang:mh, ten_npl:tn, mau_sac:ms, po, so_luong:sl, don_vi:dv});
+  }
+  if (danh_sach_npl.length === 0) return showAl("newAl","er","Chưa có NPL nào trong phiếu");
 
   setBusy("btnNew", true, "Đang lưu...");
   try {
-    const r = await api("taoPhieu", {
-      nguoi_cap, nguoi_nhan, ma_hang, ten_npl, mau_sac, po, don_vi, so_luong, ghi_chu,
-      chu_ky_cap_b64: getSig("Cap")
-    });
+    const r = await api("taoPhieu", {nguoi_cap, nguoi_nhan, ghi_chu, danh_sach_npl, chu_ky_cap_b64: getSig("Cap")});
     showAl("newAl","ok",
-      `✓ Tạo phiếu thành công! &nbsp;Mã phiếu: <b>${r.phieu_id}</b><br>
-       Gửi mã này cho người nhận để họ vào web ký xác nhận.`);
-    // Reset
-    ["fNhan","fSL","fGC","fMaHang","fTenNPL","fMau","fPO","fDonVi"]
-      .forEach(i => document.getElementById(i).value="");
-    document.getElementById("fNPL").selectedIndex=0;
-    clrSig("Cap");
+      `✓ Tạo phiếu thành công! &nbsp;Mã phiếu: <b>${r.phieu_id}</b><br>Gửi mã này cho người nhận để ký xác nhận.`);
+    document.getElementById("fNhan").value="";
+    document.getElementById("fGC").value="";
+    document.getElementById("nplList").innerHTML="";
+    nplCount=0; addNPLItem(); clrSig("Cap");
   } catch(e) { showAl("newAl","er", e.message); }
   finally    { setBusy("btnNew", false, "Tạo phiếu & lưu chữ ký"); }
 }
 
-// ══════════════════════════════════════════
-//  KÝ NHẬN
-// ══════════════════════════════════════════
+// ══════════ KÝ NHẬN ══════════
 async function loadForSign() {
   const pid = document.getElementById("sPhieuId").value.trim().toUpperCase();
   if (!pid) return;
-  document.getElementById("signAl").innerHTML = "";
+  document.getElementById("signAl").innerHTML="";
   try {
-    const r = await api("getPhieu", {phieu_id: pid});
+    const r = await api("getPhieu", {phieu_id:pid});
     const p = r.data;
-    if (p.trang_thai === "Hoàn tất")
-      return showAl("signAl","in","Phiếu <b>"+pid+"</b> đã được ký nhận rồi.");
-
+    if (p.trang_thai === "Hoàn tất") return showAl("signAl","in","Phiếu <b>"+pid+"</b> đã được ký nhận rồi.");
     SIGN_ID = pid;
-    document.getElementById("signDetail").style.display = "block";
-    document.getElementById("signInfo").innerHTML = `
+
+    const nplRows = (p.danh_sach||[]).map(item =>
+      `<tr><td>${item.ma_hang}</td><td>${item.ten_npl}</td><td>${item.mau_sac}</td>
+           <td>${item.po}</td><td style="font-weight:600">${item.so_luong} ${item.don_vi}</td></tr>`
+    ).join("");
+
+    document.getElementById("signDetail").style.display="block";
+    document.getElementById("signInfo").innerHTML=`
       <div class="dr"><span class="dl">Mã phiếu</span><span class="dv" style="font-family:monospace">${p.phieu_id}</span></div>
       <div class="dr"><span class="dl">Ngày giờ</span><span class="dv">${p.timestamp}</span></div>
       <div class="dr"><span class="dl">Người cấp phát</span><span class="dv">${p.nguoi_cap}</span></div>
-      <div class="dr"><span class="dl">Mã hàng</span><span class="dv">${p.ma_hang}</span></div>
-      <div class="dr"><span class="dl">Tên NPL</span><span class="dv">${p.ten_npl}</span></div>
-      <div class="dr"><span class="dl">Màu sắc</span><span class="dv">${p.mau_sac}</span></div>
-      <div class="dr"><span class="dl">PO</span><span class="dv">${p.po}</span></div>
-      <div class="dr" style="border:none"><span class="dl">Số lượng</span><span class="dv">${p.so_luong} ${p.don_vi}</span></div>
-    `;
+      <div class="dr" style="border:none;margin-bottom:10px"><span class="dl">Người nhận</span><span class="dv">${p.nguoi_nhan}</span></div>
+      <table class="npl-table">
+        <thead><tr><th>Mã hàng</th><th>Tên NPL</th><th>Màu</th><th>PO</th><th>Số lượng</th></tr></thead>
+        <tbody>${nplRows}</tbody>
+      </table>`;
     clrSig("Nhan");
     document.getElementById("signDetail").scrollIntoView({behavior:"smooth",block:"start"});
   } catch(e) {
@@ -586,106 +632,171 @@ async function submitSign() {
   try {
     const r = await api("kyNhan", {phieu_id:SIGN_ID, chu_ky_nhan_b64:getSig("Nhan")});
     showAl("signAl","ok",
-      `✓ Xác nhận thành công! &nbsp;
-       <a href="${r.link_pdf}" target="_blank" style="color:var(--g7);font-weight:600">📄 Xem PDF chứng từ</a>`);
+      `✓ Xác nhận thành công! &nbsp;<a href="${r.link_pdf}" target="_blank" style="color:var(--g7);font-weight:600">📄 Xem PDF chứng từ</a>`);
     document.getElementById("signDetail").style.display="none";
     document.getElementById("sPhieuId").value="";
   } catch(e) { showAl("signAl","er", e.message); }
   finally    { setBusy("btnSign", false, "Xác nhận nhận hàng"); }
 }
 
-// ══════════════════════════════════════════
-//  DANH SÁCH
-// ══════════════════════════════════════════
+// ══════════ DANH SÁCH ══════════
 async function loadList() {
-  const box = document.getElementById("listBox");
-  box.innerHTML = '<div class="ld"><div class="sp"></div>Đang tải...</div>';
-  try {
-    const r = await api("getAllPhieu");
-    renderList(r.data, box);
-  } catch(e) { box.innerHTML = `<div class="al al-er">${e.message}</div>`; }
+  const box=document.getElementById("listBox");
+  box.innerHTML='<div class="ld"><div class="sp"></div>Đang tải...</div>';
+  try { const r=await api("getAllPhieu"); renderList(r.data, box); }
+  catch(e) { box.innerHTML=`<div class="al al-er">${e.message}</div>`; }
 }
 
 async function loadAdmin() {
-  const box = document.getElementById("adminBox");
-  box.innerHTML = '<div class="ld"><div class="sp"></div>Đang tải...</div>';
+  const box=document.getElementById("adminBox");
+  box.innerHTML='<div class="ld"><div class="sp"></div>Đang tải...</div>';
   try {
-    const r = await api("getAllPhieu");
-    // Stats
-    const total = r.data.length;
-    const wait  = r.data.filter(p=>p.trang_thai==="Chờ ký nhận").length;
-    document.getElementById("statTotal").textContent = total;
-    document.getElementById("statWait").textContent  = wait;
-    document.getElementById("statDone").textContent  = total - wait;
-    // Update badge
-    if (wait>0) { const b=document.querySelector(".badge"); if(b){b.style.display="inline";b.textContent=wait;} }
+    const r=await api("getAllPhieu");
+    const w=r.data.filter(p=>p.trang_thai==="Chờ ký nhận").length;
+    document.getElementById("stTotal").textContent=r.data.length;
+    document.getElementById("stWait").textContent=w;
+    document.getElementById("stDone").textContent=r.data.length-w;
     renderList(r.data, box);
-  } catch(e) { box.innerHTML = `<div class="al al-er">${e.message}</div>`; }
+  } catch(e) { box.innerHTML=`<div class="al al-er">${e.message}</div>`; }
 }
 
 function renderList(data, container) {
-  if (!data.length) {
-    container.innerHTML='<div class="empty"><div class="empty-ic">📋</div><p>Chưa có phiếu nào</p></div>';
-    return;
-  }
-  container.innerHTML = data.map(p => `
-    <div class="pi" onclick="showDetail('${p.phieu_id}')">
+  if (!data.length) { container.innerHTML='<div class="empty"><div class="empty-ic">📋</div><p>Chưa có phiếu nào</p></div>'; return; }
+  container.innerHTML = data.map(p => {
+    const nplSummary = (p.danh_sach||[]).map(i=>`${i.ten_npl} ${i.mau_sac}`).join(", ") || "—";
+    return `<div class="pi" onclick="showDetail('${p.phieu_id}')">
       <div class="pi-row">
         <span class="pi-id">${p.phieu_id}</span>
         <span class="st ${p.trang_thai==="Hoàn tất"?"st-done":"st-wait"}">${p.trang_thai}</span>
       </div>
-      <div class="pi-npl">${p.ma_hang} · ${p.ten_npl} · ${p.mau_sac} &nbsp;|&nbsp; ${p.so_luong} ${p.don_vi}</div>
-      <div class="pi-meta">${p.nguoi_cap} → ${p.nguoi_nhan} &nbsp;·&nbsp; ${p.timestamp}</div>
-    </div>`).join("");
+      <div class="pi-npl">${nplSummary}</div>
+      <div class="pi-meta">${p.nguoi_cap} → ${p.nguoi_nhan} · ${p.timestamp}</div>
+    </div>`;
+  }).join("");
 }
 
-// ══════════════════════════════════════════
-//  MODAL
-// ══════════════════════════════════════════
+// ══════════ TỒN KHO ══════════
+let STOCK_DATA = []; // cache data
+
+async function loadStockPage() {
+  const box = document.getElementById("stockBox");
+  box.innerHTML = '<div class="ld"><div class="sp"></div>Đang tải...</div>';
+  try {
+    // Lấy toàn bộ NPL từ danh mục
+    const nplRes = await api("getNPL");
+    // Lấy tồn kho từng dòng song song
+    const rows = await Promise.all(nplRes.data.map(async n => {
+      try {
+        const tk = await api("getTonKho", {ma_hang:n.ma_hang, ten_npl:n.ten_npl, mau_sac:n.mau_sac, po:n.po});
+        return { ...n, ton_kho:tk.ton_kho, da_xuat:tk.da_xuat, con_lai:tk.con_lai };
+      } catch { return { ...n, ton_kho:n.so_luong, da_xuat:0, con_lai:n.so_luong }; }
+    }));
+    STOCK_DATA = rows;
+
+    // Build filter dropdown mã hàng
+    const sel = document.getElementById("filterMaHang");
+    const maHangs = [...new Set(rows.map(r => r.ma_hang))].sort();
+    sel.innerHTML = '<option value="">— Tất cả mã hàng —</option>';
+    maHangs.forEach(m => { const o=document.createElement("option"); o.value=o.textContent=m; sel.appendChild(o); });
+
+    renderStockTable(rows);
+  } catch(e) { box.innerHTML = `<div class="al al-er">${e.message}</div>`; }
+}
+
+function filterStock() {
+  const mh  = document.getElementById("filterMaHang").value.toLowerCase();
+  const kw  = document.getElementById("filterSearch").value.toLowerCase();
+  const filtered = STOCK_DATA.filter(r =>
+    (!mh || r.ma_hang.toLowerCase() === mh) &&
+    (!kw || [r.ma_hang,r.ten_npl,r.mau_sac,r.po].some(v => String(v).toLowerCase().includes(kw)))
+  );
+  renderStockTable(filtered);
+}
+
+function renderStockTable(rows) {
+  const box = document.getElementById("stockBox");
+  if (!rows.length) { box.innerHTML='<div class="empty"><div class="empty-ic">📦</div><p>Không có dữ liệu</p></div>'; return; }
+
+  // Tổng summary
+  const hetHang   = rows.filter(r => r.con_lai <= 0).length;
+  const sapHet    = rows.filter(r => r.con_lai > 0 && r.con_lai < r.ton_kho * 0.2).length;
+  const conNhieu  = rows.filter(r => r.con_lai >= r.ton_kho * 0.2).length;
+
+  const tableRows = rows.map(r => {
+    const pct  = r.ton_kho > 0 ? Math.round(r.con_lai / r.ton_kho * 100) : 0;
+    let barCls = "bar-ok", stCls = "stock-ok", stTxt = `${r.con_lai} ${r.don_vi}`;
+    if (r.con_lai <= 0)               { barCls="bar-empty"; stCls="stock-empty"; stTxt="Hết hàng"; }
+    else if (r.con_lai < r.ton_kho * 0.2) { barCls="bar-low"; stCls="stock-low"; stTxt=`${r.con_lai} ${r.don_vi} ⚠`; }
+    return `<tr>
+      <td style="font-weight:600;color:var(--g7)">${r.ma_hang}</td>
+      <td>${r.ten_npl}</td>
+      <td>${r.mau_sac}</td>
+      <td>${r.po}</td>
+      <td style="text-align:right">${r.ton_kho}</td>
+      <td style="text-align:right;color:var(--rd)">${r.da_xuat}</td>
+      <td>
+        <div class="bar-wrap"><div class="bar ${barCls}" style="width:${Math.min(pct,100)}%"></div></div>
+        <span class="stock-tag ${stCls}" style="font-size:10px;padding:2px 7px">${stTxt}</span>
+      </td>
+    </tr>`;
+  }).join("");
+
+  box.innerHTML = `
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <span class="stock-tag stock-ok">🟢 Còn nhiều: ${conNhieu}</span>
+      <span class="stock-tag stock-low">🟡 Sắp hết: ${sapHet}</span>
+      <span class="stock-tag stock-empty">🔴 Hết hàng: ${hetHang}</span>
+    </div>
+    <div style="overflow-x:auto;border-radius:8px;border:1px solid var(--f1)">
+      <table class="stock-table">
+        <thead><tr>
+          <th>Mã hàng</th><th>Tên NPL</th><th>Màu</th><th>PO</th>
+          <th style="text-align:right">Tổng kho</th>
+          <th style="text-align:right">Đã xuất</th>
+          <th>Còn lại</th>
+        </tr></thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+    </div>`;
+}
+
+// ══════════ MODAL ══════════
 async function showDetail(pid) {
-  document.getElementById("mTitle").textContent = pid;
-  document.getElementById("mBody").innerHTML = '<div class="ld"><div class="sp"></div></div>';
+  document.getElementById("mTitle").textContent=pid;
+  document.getElementById("mBody").innerHTML='<div class="ld"><div class="sp"></div></div>';
   document.getElementById("ov").classList.add("open");
   try {
-    const r = await api("getPhieu",{phieu_id:pid});
-    const p = r.data;
-    const cls = p.trang_thai==="Hoàn tất"?"st-done":"st-wait";
-    document.getElementById("mBody").innerHTML = `
+    const r=await api("getPhieu",{phieu_id:pid});
+    const p=r.data;
+    const cls=p.trang_thai==="Hoàn tất"?"st-done":"st-wait";
+    const nplRows=(p.danh_sach||[]).map(item=>
+      `<tr><td>${item.ma_hang}</td><td>${item.ten_npl}</td><td>${item.mau_sac}</td>
+           <td>${item.po}</td><td style="font-weight:600">${item.so_luong} ${item.don_vi}</td></tr>`
+    ).join("");
+    document.getElementById("mBody").innerHTML=`
       <div class="dr"><span class="dl">Ngày giờ</span><span class="dv">${p.timestamp}</span></div>
       <div class="dr"><span class="dl">Người cấp phát</span><span class="dv">${p.nguoi_cap}</span></div>
       <div class="dr"><span class="dl">Người nhận</span><span class="dv">${p.nguoi_nhan}</span></div>
-      <div class="dr"><span class="dl">Mã hàng</span><span class="dv">${p.ma_hang}</span></div>
-      <div class="dr"><span class="dl">Tên NPL</span><span class="dv">${p.ten_npl}</span></div>
-      <div class="dr"><span class="dl">Màu sắc</span><span class="dv">${p.mau_sac}</span></div>
-      <div class="dr"><span class="dl">PO</span><span class="dv">${p.po}</span></div>
-      <div class="dr"><span class="dl">Số lượng</span><span class="dv">${p.so_luong} ${p.don_vi}</span></div>
       <div class="dr"><span class="dl">Trạng thái</span><span class="dv"><span class="st ${cls}">${p.trang_thai}</span></span></div>
       ${p.ghi_chu?`<div class="dr"><span class="dl">Ghi chú</span><span class="dv">${p.ghi_chu}</span></div>`:""}
+      <table class="npl-table" style="margin:12px 0">
+        <thead><tr><th>Mã hàng</th><th>Tên NPL</th><th>Màu</th><th>PO</th><th>Số lượng</th></tr></thead>
+        <tbody>${nplRows}</tbody>
+      </table>
       <div class="links">
-        ${p.link_chu_ky_cap  ?`<a class="lnk" href="${p.link_chu_ky_cap}"  target="_blank">🖊 Chữ ký cấp phát</a>`:""}
-        ${p.link_chu_ky_nhan ?`<a class="lnk" href="${p.link_chu_ky_nhan}" target="_blank">🖊 Chữ ký người nhận</a>`:""}
-        ${p.link_pdf         ?`<a class="lnk" href="${p.link_pdf}"         target="_blank" style="font-weight:700">📄 PDF chứng từ</a>`:""}
+        ${p.link_chu_ky_cap ?`<a class="lnk" href="${p.link_chu_ky_cap}"  target="_blank">🖊 Chữ ký cấp phát</a>`:""}
+        ${p.link_chu_ky_nhan?`<a class="lnk" href="${p.link_chu_ky_nhan}" target="_blank">🖊 Chữ ký người nhận</a>`:""}
+        ${p.link_pdf        ?`<a class="lnk" href="${p.link_pdf}"         target="_blank" style="font-weight:700">📄 PDF chứng từ</a>`:""}
       </div>`;
-  } catch(e) {
-    document.getElementById("mBody").innerHTML=`<div class="al al-er">${e.message}</div>`;
-  }
+  } catch(e) { document.getElementById("mBody").innerHTML=`<div class="al al-er">${e.message}</div>`; }
 }
 function closeModal(e) {
-  if (!e || e.target===document.getElementById("ov"))
-    document.getElementById("ov").classList.remove("open");
+  if (!e || e.target===document.getElementById("ov")) document.getElementById("ov").classList.remove("open");
 }
 
-// ══════════════════════════════════════════
-//  HELPERS
-// ══════════════════════════════════════════
-function showAl(id, type, msg) {
-  const el = document.getElementById(id); if(!el) return;
-  el.innerHTML = `<div class="al al-${type}">${msg}</div>`;
-}
-function setBusy(id, busy, label) {
-  const el = document.getElementById(id); if(!el) return;
-  el.disabled = busy; el.textContent = label;
-}
+// ══════════ HELPERS ══════════
+function showAl(id, type, msg) { const el=document.getElementById(id); if(el) el.innerHTML=`<div class="al al-${type}">${msg}</div>`; }
+function setBusy(id, busy, label) { const el=document.getElementById(id); if(el){el.disabled=busy;el.textContent=label;} }
 </script>
 </body>
 </html>
